@@ -5,69 +5,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Family Command Center</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Nunito+Sans:wght@400;500;600;700&display=swap');
   :root{
-    --bg:#fff; --ink:#1a1a1a; --muted:#666; --hint:#999;
-    --line:#e8e8e8; --line2:#ddd; --card:#fff; --surface:#f8f8f8;
-  }
-  @media (prefers-color-scheme: dark){
-    :root{ --bg:#16161a; --ink:#f2f2f2; --muted:#a9a9b2; --hint:#7a7a82;
-      --line:#2a2a30; --line2:#33333a; --card:#1d1d22; --surface:#212128; }
+    --bg:#F4EDE2; --bg2:#EFE6D8; --ink:#3D342A; --muted:#8A7B6A; --hint:#B0A392;
+    --line:#E3D7C5; --line2:#D8CAB4; --card:#FBF6EE; --surface:#EFE6D8;
+    --terracotta:#C17A54; --terracotta-soft:#EBD3C4;
+    --sage:#8A9A7B; --sage-soft:#DDE3D2;
+    --clay:#B5654A; --gold:#C9A55C; --gold-soft:#EFE2C6;
+    --plum:#9A7B8E; --plum-soft:#E5DAE0;
+    --serif:'Fraunces',Georgia,serif; --sans:'Nunito Sans',sans-serif;
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
-  body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink);
-    -webkit-font-smoothing:antialiased; padding:14px; }
-  .topbar{ display:flex; align-items:center; justify-content:space-between;
-    padding-bottom:12px; border-bottom:2px solid var(--ink); margin-bottom:14px; }
-  .topbar h1{ font-size:24px; font-weight:600; letter-spacing:-0.3px; }
-  .topbar .sub{ font-size:13px; color:var(--muted); margin-top:2px; }
-  .clock{ font-size:30px; font-weight:600; line-height:1; text-align:right; }
-  .sync{ font-size:11px; margin-top:5px; text-align:right; color:#1D9E75; }
-  .sync.saving{ color:#BA7517; }
-  .nowstrip{ display:flex; align-items:center; gap:10px; background:#E6F1FB; color:#0C447C;
-    border-radius:8px; padding:10px 14px; margin-bottom:16px; }
-  @media (prefers-color-scheme: dark){ .nowstrip{ background:#103154; color:#9cc4ee; } }
-  .nowstrip .lab{ font-size:10px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.85; }
-  .nowstrip .blk{ font-size:16px; font-weight:600; }
-  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
-  .card{ background:var(--card); border:0.5px solid var(--line); border-radius:12px; padding:16px 18px; }
-  .card-head{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-  .card-head .ttl{ font-size:16px; font-weight:600; }
-  .badge{ margin-left:auto; font-size:10px; padding:2px 9px; border-radius:8px; font-weight:600; }
-  .badge.live{ background:#E1F5EE; color:#085041; }
-  .badge.auto{ background:var(--surface); color:var(--muted); }
-  .icn{ font-size:18px; color:var(--muted); }
-  .srow{ display:flex; gap:10px; padding:6px 0; border-bottom:0.5px solid var(--line); }
+  body{ font-family:var(--sans); background:var(--bg);
+    background-image:radial-gradient(circle at 15% 12%, #EFE6D855 0%, transparent 40%),
+                     radial-gradient(circle at 85% 88%, #EBD3C433 0%, transparent 42%);
+    color:var(--ink); -webkit-font-smoothing:antialiased; padding:18px 16px; }
+  .topbar{ display:flex; align-items:flex-end; justify-content:space-between;
+    padding-bottom:16px; margin-bottom:18px; position:relative; }
+  .topbar::after{ content:""; position:absolute; bottom:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--terracotta) 0%, var(--gold) 45%, var(--sage) 100%);
+    border-radius:2px; opacity:0.55; }
+  .topbar h1{ font-family:var(--serif); font-size:32px; font-weight:600; letter-spacing:-0.5px;
+    color:var(--ink); line-height:1; }
+  .topbar .sub{ font-family:var(--serif); font-style:italic; font-size:14px; color:var(--terracotta); margin-top:5px; }
+  .clock{ font-family:var(--serif); font-size:34px; font-weight:500; line-height:1; text-align:right; color:var(--ink); }
+  .sync{ font-size:11px; margin-top:6px; text-align:right; color:var(--sage); font-weight:600; }
+  .sync.saving{ color:var(--gold); }
+  .nowstrip{ display:flex; align-items:center; gap:12px;
+    background:linear-gradient(100deg, var(--terracotta-soft), var(--gold-soft));
+    color:var(--clay); border-radius:18px; padding:13px 18px; margin-bottom:18px;
+    box-shadow:0 2px 12px #C17A5418; }
+  .nowstrip .lab{ font-size:10px; text-transform:uppercase; letter-spacing:0.12em; opacity:0.8; font-weight:700; }
+  .nowstrip .blk{ font-family:var(--serif); font-size:17px; font-weight:500; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px 20px;
+    box-shadow:0 4px 16px #A8927015, 0 1px 3px #A8927012; }
+  .card-head{ display:flex; align-items:center; gap:9px; margin-bottom:14px;
+    padding-bottom:10px; border-bottom:1.5px dashed var(--line2); }
+  .card-head .ttl{ font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ink); }
+  .badge{ margin-left:auto; font-size:9px; padding:3px 10px; border-radius:20px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.06em; }
+  .badge.live{ background:var(--sage-soft); color:#556347; }
+  .badge.auto{ background:var(--gold-soft); color:#8A6D2A; }
+  .icn{ font-size:18px; }
+  .srow{ display:flex; gap:12px; padding:7px 0; border-bottom:1px solid var(--line); align-items:baseline; }
   .srow:last-child{ border-bottom:none; }
-  .srow .t{ min-width:58px; font-size:12px; color:var(--muted); }
-  .srow .l{ font-size:13px; }
-  .srow.now{ background:#FAEEDA40; border-radius:6px; padding:6px 8px; margin:0 -8px; }
-  .kidlabel{ display:inline-block; font-size:11px; font-weight:600; padding:2px 9px;
-    border-radius:7px; margin:12px 0 5px; }
-  .check{ display:flex; align-items:center; gap:11px; padding:7px 0;
-    border-bottom:0.5px solid var(--line); cursor:pointer; user-select:none; }
+  .srow .t{ min-width:60px; font-size:12px; color:var(--terracotta); font-weight:700; }
+  .srow .l{ font-size:13.5px; }
+  .kidlabel{ display:inline-block; font-family:var(--serif); font-size:12px; font-weight:600;
+    padding:3px 12px; border-radius:20px; margin:14px 0 6px; }
+  .check{ display:flex; align-items:center; gap:12px; padding:8px 0;
+    border-bottom:1px solid var(--line); cursor:pointer; user-select:none; }
   .check:last-child{ border-bottom:none; }
-  .check input{ width:22px; height:22px; flex-shrink:0; accent-color:#1D9E75; cursor:pointer; }
+  .check input{ width:22px; height:22px; flex-shrink:0; accent-color:var(--sage); cursor:pointer; border-radius:6px; }
   .check .txt{ font-size:13.5px; }
-  .check.done{ opacity:0.42; }
+  .check.done{ opacity:0.4; }
   .check.done .txt{ text-decoration:line-through; }
-  .addrow{ display:flex; gap:8px; margin-top:12px; }
-  .addrow input{ flex:1; font-family:inherit; font-size:14px; padding:8px 11px;
-    border:0.5px solid var(--line2); border-radius:8px; background:var(--bg); color:var(--ink); }
-  .addrow button, .resetbtn{ font-family:inherit; font-size:13px; font-weight:500; padding:8px 14px;
-    border:0.5px solid var(--line2); border-radius:8px; background:var(--bg); color:var(--ink); cursor:pointer; }
-  .addrow button:active, .resetbtn:active{ transform:scale(0.97); }
-  .mrow{ display:flex; gap:10px; padding:6px 0; border-bottom:0.5px solid var(--line); }
+  .addrow{ display:flex; gap:8px; margin-top:14px; }
+  .addrow input{ flex:1; font-family:inherit; font-size:14px; padding:10px 14px;
+    border:1px solid var(--line2); border-radius:14px; background:var(--bg2); color:var(--ink); }
+  .addrow input:focus{ outline:none; border-color:var(--terracotta); }
+  .addrow button, .resetbtn{ font-family:inherit; font-size:13px; font-weight:700; padding:10px 16px;
+    border:none; border-radius:14px; background:var(--terracotta); color:#FBF6EE; cursor:pointer;
+    transition:transform 0.1s, background 0.2s; }
+  .addrow button:hover, .resetbtn:hover{ background:var(--clay); }
+  .addrow button:active, .resetbtn:active{ transform:scale(0.96); }
+  .resetbtn{ background:transparent; color:var(--muted); border:1.5px solid var(--line2); }
+  .resetbtn:hover{ background:var(--bg2); color:var(--ink); }
+  .mrow{ display:flex; gap:12px; padding:7px 0; border-bottom:1px solid var(--line); align-items:baseline; }
   .mrow:last-child{ border-bottom:none; }
-  .mrow .d{ min-width:38px; font-size:12px; font-weight:600; color:var(--muted); }
-  .mrow .m{ font-size:13px; }
-  .mrow.today{ font-weight:600; }
-  .foot{ margin-top:18px; display:flex; justify-content:space-between; align-items:center;
-    font-size:11px; color:var(--hint); }
-  .setup{ background:#FAEEDA; color:#633806; border-radius:8px; padding:12px 16px;
-    font-size:13px; margin-bottom:14px; line-height:1.6; }
-  @media (prefers-color-scheme: dark){ .setup{ background:#3a2a0a; color:#f0c775; } }
-  .setup code{ background:#00000018; padding:1px 5px; border-radius:4px; font-size:12px; }
+  .mrow .d{ min-width:40px; font-family:var(--serif); font-size:13px; font-weight:600; color:var(--sage); }
+  .mrow .m{ font-size:13.5px; }
+  .mrow.today{ font-weight:700; }
+  .mrow.today .m{ color:var(--terracotta); }
+  .foot{ margin-top:22px; padding-top:14px; border-top:1.5px dashed var(--line2);
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--serif); font-style:italic; font-size:12px; color:var(--hint); }
+  .setup{ background:var(--gold-soft); color:#8A6D2A; border-radius:16px; padding:14px 18px;
+    font-size:13px; margin-bottom:16px; line-height:1.6; }
+  .setup code{ background:#00000012; padding:1px 5px; border-radius:4px; font-size:12px; }
 </style>
 </head>
 <body>
@@ -75,12 +91,13 @@
 <div class="topbar">
   <div>
     <h1 id="dayName">—</h1>
+    <div id="fullDate" style="font-family:var(--serif);font-size:15px;color:var(--muted);margin-top:2px;">—</div>
     <div class="sub" id="dayFocus">Family command center</div>
   </div>
   <div>
     <div class="clock" id="clock">—:—</div>
-    <div id="weather" style="font-size:13px;color:var(--muted);margin-top:3px;">—</div>
-    <div class="sync" id="sync"><i>●</i> connecting…</div>
+    <div id="weather" style="font-size:13px;color:var(--muted);margin-top:4px;font-weight:600;">—</div>
+    <div class="sync" id="sync">● connecting…</div>
   </div>
 </div>
 
@@ -103,15 +120,20 @@
 
   <div class="card">
     <div class="card-head">
-      <span class="icn">◷</span><span class="ttl">Today's schedule</span>
-      <span class="badge auto">auto</span>
+      <span class="icn">📖</span><span class="ttl">This week's events</span>
+      <span class="badge live">live</span>
     </div>
-    <div id="sched"></div>
+    <div id="holidays"></div>
+    <div id="events"></div>
+    <div class="addrow">
+      <input type="text" id="addEvent" placeholder="e.g. Mia dentist Thurs 3pm…" />
+      <button onclick="addEvent()">Add</button>
+    </div>
   </div>
 
   <div class="card">
     <div class="card-head">
-      <span class="icn">☑</span><span class="ttl">Today's chores</span>
+      <span class="icn">🧺</span><span class="ttl">Today's chores</span>
       <span class="badge live">live</span>
     </div>
     <div id="chores"></div>
@@ -119,7 +141,23 @@
 
   <div class="card">
     <div class="card-head">
-      <span class="icn">🛒</span><span class="ttl">Grocery list</span>
+      <span class="icn">🌿</span><span class="ttl">Today's schedule</span>
+      <span class="badge auto">auto</span>
+    </div>
+    <div id="sched"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">🍲</span><span class="ttl">This week's dinners</span>
+      <span class="badge auto">static</span>
+    </div>
+    <div id="meals"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">🧺</span><span class="ttl">Grocery list</span>
       <span class="badge live">live</span>
     </div>
     <div id="grocery"></div>
@@ -127,28 +165,6 @@
       <input type="text" id="addItem" placeholder="Add item…" />
       <button onclick="addGrocery()">Add</button>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-head">
-      <span class="icn">📅</span><span class="ttl">This week's events</span>
-      <span class="badge live">live</span>
-    </div>
-    <div id="calFeed" style="margin-bottom:8px;"><div style="font-size:12.5px;color:var(--hint);padding:6px 0;">Loading calendars…</div></div>
-    <div id="calLegend" style="display:flex;flex-wrap:wrap;gap:8px 14px;padding:8px 0;border-top:0.5px solid var(--line);font-size:11px;color:var(--muted);"></div>
-    <div id="events"></div>
-    <div class="addrow">
-      <input type="text" id="addEvent" placeholder="Quick note (not on a calendar)…" />
-      <button onclick="addEvent()">Add</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-head">
-      <span class="icn">🍽</span><span class="ttl">This week's dinners</span>
-      <span class="badge auto">static</span>
-    </div>
-    <div id="meals"></div>
   </div>
 
 </div>
@@ -171,40 +187,47 @@ const SUPABASE_KEY = "sb_publishable_35hDrvMRv9e1LmppUi18tw_V9wqoStW";
 /* ---- SUMMER schedule (until mid-August) ---- */
 const SCHEDULES = {
   Monday: { focus:"SUMMER · clean bathrooms · no-screen family night", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
     {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
     {t:"9:10",l:"Clean bathrooms"},{t:"9:35",l:"Study block #1 (2 hrs) — boys on quiet time"},
     {t:"11:35",l:"Lunch + rest"},{t:"12:20",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
     {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
     {t:"5:00",l:"Start dinner"},{t:"6:00",l:"No-screen family night"},{t:"8:00",l:"Bedtimes begin"},
-    {t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
-  Tuesday: { focus:"SUMMER · clinical day · leave 1:15 pm · laundry #1", rows:[
-    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk"},{t:"9:10",l:"Laundry load #1"},
-    {t:"9:15",l:"Clinical prep study — boys on quiet time"},{t:"10:45",l:"Rotate laundry"},
-    {t:"11:00",l:"Lunch + pack clinical bag"},{t:"12:00",l:"Rest + light prep"},
-    {t:"1:15",l:"Leave for hospital · Chad has the kids"},{t:"3:00",l:"Clinicals 3–11 pm"},{t:"11:30",l:"Home · straight to bed"} ]},
+    {t:"10:00",l:"In bed"} ]},
+  Tuesday: { focus:"SUMMER · laundry #1 · no clinicals in summer", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
+    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
+    {t:"9:10",l:"Laundry load #1"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
+    {t:"10:45",l:"Rotate laundry"},{t:"11:30",l:"Lunch + rest"},
+    {t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},{t:"2:00",l:"Boys: free / outdoor time"},
+    {t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
+    {t:"5:00",l:"Start dinner"},{t:"8:00",l:"Bedtimes begin"},{t:"10:00",l:"In bed"} ]},
   Wednesday: { focus:"SUMMER · kitchen deep clean · seafood dinner", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
     {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
     {t:"9:10",l:"Kitchen deep clean"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
     {t:"11:30",l:"Lunch + rest"},{t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
     {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
-    {t:"5:00",l:"Dinner · seafood"},{t:"8:00",l:"Bedtimes begin"},{t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
+    {t:"5:00",l:"Dinner · seafood"},{t:"8:00",l:"Bedtimes begin"},{t:"10:00",l:"In bed"} ]},
   Thursday: { focus:"SUMMER · no class till mid-Aug · floors", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
     {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
     {t:"9:10",l:"Mop kitchen + bathroom floors"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
     {t:"11:30",l:"Lunch + rest"},{t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
     {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
-    {t:"5:00",l:"Start dinner"},{t:"8:00",l:"Bedtimes begin"},{t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
+    {t:"5:00",l:"Start dinner"},{t:"8:00",l:"Bedtimes begin"},{t:"10:00",l:"In bed"} ]},
   Friday: { focus:"SUMMER · laundry #2: bedding + towels · no studying tonight", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
     {t:"8:00",l:"Boys up · breakfast · strip their beds"},{t:"8:45",l:"Dog walk"},{t:"9:10",l:"Start bedding loads"},
     {t:"9:30",l:"Weekly review (1.5 hrs) — boys on quiet time"},{t:"11:00",l:"Fold + return bedding"},
     {t:"11:15",l:"Plan next week"},{t:"11:45",l:"Lunch + rest"},
     {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
     {t:"5:00",l:"Start dinner"},{t:"6:30",l:"Friday family time"},{t:"8:00",l:"Bedtimes begin"},
-    {t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
+    {t:"10:00",l:"In bed"} ]},
   Saturday: { focus:"Family speed clean · family day · sleep in", rows:[
     {t:"7–8",l:"Wake naturally — no alarm"},{t:"mid-am",l:"Light study (1 hr max)"},
     {t:"10:00",l:"Family 20-min speed clean"},{t:"pm",l:"Family time — outings"},
-    {t:"5:00",l:"Dinner — relaxed"},{t:"8:00",l:"Bedtimes begin"},{t:"9:00",l:"Husband time"},{t:"10:30",l:"Bed"} ]},
+    {t:"5:00",l:"Dinner — relaxed"},{t:"8:00",l:"Bedtimes begin"},{t:"10:30",l:"Bed"} ]},
   Sunday: { focus:"Recharge · Sunday reset · protect Mia's evening", rows:[
     {t:"am",l:"Slow morning · light movement"},{t:"mid-am",l:"Light review (1 hr max)"},
     {t:"pm",l:"Family time"},{t:"4:00",l:"Kids tidy rooms"},{t:"5:00",l:"Dinner"},
@@ -215,45 +238,45 @@ const SCHEDULES = {
 /* ---- Per-kid chores by day, from your schedules ---- */
 const KIDS_ORDER = ["Christina","Chad","Alex","Ollie"];
 const KID_COLORS = {
-  Christina:["#E1F5EE","#085041"], Chad:["#FAEEDA","#633806"],
-  Alex:["#E6F1FB","#0C447C"], Ollie:["#EEEDFE","#3C3489"]
+  Christina:["#DDE3D2","#556347"], Chad:["#EFE2C6","#8A6D2A"],
+  Alex:["#EBD3C4","#B5654A"], Ollie:["#E5DAE0","#7A5E6E"]
 };
 const CHORES = {
   Monday: {
     Christina:["Clean bathrooms","Wipe kitchen counters + sink","Start a load of laundry"],
-    Chad:["Kitchen after dinner: dishes + wipe down","Take out trash if full"],
-    Alex:["Make bed + tidy room","Wipe bathroom sink + mirror","Load/unload dishwasher"],
-    Ollie:["Make bed (light help)","Tidy his bathroom","Feed the dogs"] },
+    Chad:["Kitchen after dinner: wipe down","Take out trash if full"],
+    Alex:["Wash the dishes","Feed dogs (morning)","Make bed + tidy room","Wipe bathroom sink + mirror"],
+    Ollie:["Unload the dishwasher","Feed dogs (evening)","Make bed (light help)","Tidy his bathroom"] },
   Tuesday: {
-    Christina:["Laundry load #1 before clinicals","Quick kitchen reset before leaving"],
-    Chad:["Crockpot/dinner + kitchen cleanup","Kids' baths + bedtime","Move laundry to dryer + fold"],
-    Alex:["Make bed + tidy room","Fold + put away his clothes","Take out trash"],
-    Ollie:["Make bed (light help)","Fold his clothes (light help)","Feed the dogs"] },
+    Christina:["Laundry load #1","Rotate + fold laundry","Wipe kitchen counters + sink"],
+    Chad:["Kitchen after dinner: wipe down","Take out trash if full"],
+    Alex:["Wash the dishes","Feed dogs (morning)","Make bed + tidy room","Fold + put away his clothes"],
+    Ollie:["Unload the dishwasher","Feed dogs (evening)","Make bed (light help)","Fold his clothes (light help)"] },
   Wednesday: {
     Christina:["Kitchen deep clean (stovetop, microwave, fridge front)","Wipe counters"],
-    Chad:["Kitchen after dinner: dishes + wipe down","Tidy living room"],
-    Alex:["Make bed + tidy room","Unload dishwasher + sweep","Wipe counters"],
-    Ollie:["Make bed (light help)","Wipe table + chairs","Feed the dogs"] },
+    Chad:["Kitchen after dinner: wipe down","Tidy living room"],
+    Alex:["Wash the dishes","Feed dogs (morning)","Make bed + tidy room","Sweep kitchen floor"],
+    Ollie:["Unload the dishwasher","Feed dogs (evening)","Make bed (light help)","Wipe table + chairs"] },
   Thursday: {
     Christina:["Mop kitchen + bathroom floors","Change/wash hand towels"],
     Chad:["Vacuum living room + hallways","Kitchen after dinner"],
-    Alex:["Make bed + tidy room","Vacuum his room","Load/unload dishwasher"],
-    Ollie:["Make bed (light help)","Tidy play spaces","Feed the dogs"] },
+    Alex:["Wash the dishes","Feed dogs (morning)","Make bed + tidy room","Vacuum his room"],
+    Ollie:["Unload the dishwasher","Feed dogs (evening)","Make bed (light help)","Tidy play spaces"] },
   Friday: {
     Christina:["Bedding + towels: wash all","Fold + return bedding to rooms","Wipe down bathrooms"],
     Chad:["Strip + remake the main bed","Kitchen after dinner","Empty all trash + recycling to curb"],
-    Alex:["Strip bed → laundry room","Remake his bed","Take out trash + recycling"],
-    Ollie:["Strip pillowcase + sheet","Remake his bed (light help)","Feed the dogs"] },
+    Alex:["Wash the dishes","Feed dogs (morning)","Strip bed → laundry room","Remake his bed","Take out trash + recycling"],
+    Ollie:["Unload the dishwasher","Feed dogs (evening)","Strip pillowcase + sheet","Remake his bed (light help)"] },
   Saturday: {
     Christina:["Dust + surfaces during family speed clean","Overflow / catch-all tidy"],
     Chad:["Bathrooms + kitchen during speed clean","Yard / outdoor task"],
-    Alex:["Trash + recycling (whole house)","Tidy his room"],
-    Ollie:["Tidy play spaces","Feed the dogs"] },
+    Alex:["Wash the dishes","Feed dogs (morning)","Trash + recycling (whole house)","Tidy his room"],
+    Ollie:["Unload the dishwasher","Feed dogs (evening)","Tidy play spaces","Wipe down doorknobs + light switches"] },
   Sunday: {
     Christina:["Sunday reset: lay out clothes + pack bags","Wipe kitchen + start week clean"],
     Chad:["Fridge cleanout + take stock for grocery list","Tidy living room + reset"],
-    Alex:["Full room tidy + stray laundry"],
-    Ollie:["Tidy room + shared spaces","Feed the dogs"] }
+    Alex:["Wash the dishes","Feed dogs (morning)","Full room tidy + stray laundry"],
+    Ollie:["Unload the dishwasher","Feed dogs (evening)","Tidy room + shared spaces"] }
 };
 
 /* ---- Weekly dinners ---- */
@@ -404,6 +427,8 @@ function tick(){
   var d=new Date(); var h=d.getHours(),m=d.getMinutes();
   var ap=h>=12?"pm":"am"; var h12=h%12||12;
   document.getElementById("clock").textContent=h12+":"+(m<10?"0":"")+m+" "+ap;
+  var fd=document.getElementById("fullDate");
+  if(fd) fd.textContent=d.toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"});
 }
 
 /* ---- weather: Rochester, NY via free Open-Meteo (no key needed) ---- */
@@ -425,42 +450,38 @@ async function loadWeather(){
   }catch(e){ document.getElementById("weather").textContent=""; }
 }
 
-/* ---- Family calendars — fetched via our own Netlify function (reliable, no CORS) ---- */
-async function loadCalendars(){
+/* ---- US holidays via free Nager.Date API (no key, browser-friendly) ---- */
+async function loadHolidays(){
+  var el=document.getElementById("holidays");
+  if(!el) return;
   try{
-    var r=await fetch("/api/calendars");
+    var yr=new Date().getFullYear();
+    var r=await fetch("https://date.nager.at/api/v3/PublicHolidays/"+yr+"/US");
     if(!r.ok) throw new Error(r.status);
-    var data=await r.json();
-    var all=data.events||[];
-    var cals=data.calendars||[];
-
-    var el=document.getElementById("calFeed");
-    if(!all.length){
-      el.innerHTML='<div style="font-size:12.5px;color:var(--hint);padding:6px 0;">No calendar events in the next 7 days.</div>';
-    } else {
-      el.innerHTML=all.map(function(ev){
-        var d=new Date(ev.date);
-        var day=d.toLocaleDateString(undefined,{weekday:"short"});
-        var when=ev.allDay?day:day+" "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
-        return '<div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:0.5px solid var(--line);">'
-          +'<span style="width:9px;height:9px;border-radius:50%;background:'+ev.color+';flex-shrink:0;"></span>'
-          +'<span style="min-width:78px;font-size:12px;color:var(--muted);">'+when+'</span>'
-          +'<span style="font-size:13px;">'+ev.title+'</span></div>';
-      }).join("");
-    }
-    document.getElementById("calLegend").innerHTML=cals.map(function(c){
-      return '<span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:'+c.color+';"></span>'+c.who+'</span>';
+    var list=await r.json();
+    var today=new Date(); today.setHours(0,0,0,0);
+    var wkEnd=new Date(today); wkEnd.setDate(wkEnd.getDate()+7);
+    var soon=list.map(function(h){
+      var p=h.date.split("-"); return { name:h.localName, d:new Date(+p[0],+p[1]-1,+p[2]) };
+    }).filter(function(h){ return h.d>=today && h.d<wkEnd; })
+      .sort(function(a,b){ return a.d-b.d; });
+    if(!soon.length){ el.innerHTML=""; return; }
+    el.innerHTML=soon.map(function(h){
+      var isToday=h.d.getTime()===today.getTime();
+      var day=isToday?"Today":h.d.toLocaleDateString(undefined,{weekday:"short"});
+      return '<div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:0.5px solid var(--line);">'
+        +'<span style="font-size:14px;">🎉</span>'
+        +'<span style="min-width:52px;font-size:12px;color:var(--muted);">'+day+'</span>'
+        +'<span style="font-size:13px;font-weight:'+(isToday?'600':'400')+';">'+h.name+'</span></div>';
     }).join("");
-  }catch(e){
-    document.getElementById("calFeed").innerHTML='<div style="font-size:12.5px;color:var(--hint);padding:6px 0;">Calendars couldn\u2019t load right now — will retry.</div>';
-  }
+  }catch(e){ el.innerHTML=""; }
 }
 
 /* ---- init ---- */
 (function init(){
   tick(); setInterval(tick,15000);
   loadWeather(); setInterval(loadWeather, 1800000);
-  loadCalendars(); setInterval(loadCalendars, 900000);
+  loadHolidays(); setInterval(loadHolidays, 21600000);
   if(SUPABASE_URL && SUPABASE_KEY){
     document.getElementById("setupNote").style.display="none";
     var s=document.createElement("script");
