@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Command Center</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  :root{
+    --bg:#fff; --ink:#1a1a1a; --muted:#666; --hint:#999;
+    --line:#e8e8e8; --line2:#ddd; --card:#fff; --surface:#f8f8f8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#16161a; --ink:#f2f2f2; --muted:#a9a9b2; --hint:#7a7a82;
+      --line:#2a2a30; --line2:#33333a; --card:#1d1d22; --surface:#212128; }
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; padding:14px; }
+  .topbar{ display:flex; align-items:center; justify-content:space-between;
+    padding-bottom:12px; border-bottom:2px solid var(--ink); margin-bottom:14px; }
+  .topbar h1{ font-size:24px; font-weight:600; letter-spacing:-0.3px; }
+  .topbar .sub{ font-size:13px; color:var(--muted); margin-top:2px; }
+  .clock{ font-size:30px; font-weight:600; line-height:1; text-align:right; }
+  .sync{ font-size:11px; margin-top:5px; text-align:right; color:#1D9E75; }
+  .sync.saving{ color:#BA7517; }
+  .nowstrip{ display:flex; align-items:center; gap:10px; background:#E6F1FB; color:#0C447C;
+    border-radius:8px; padding:10px 14px; margin-bottom:16px; }
+  @media (prefers-color-scheme: dark){ .nowstrip{ background:#103154; color:#9cc4ee; } }
+  .nowstrip .lab{ font-size:10px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.85; }
+  .nowstrip .blk{ font-size:16px; font-weight:600; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+  .card{ background:var(--card); border:0.5px solid var(--line); border-radius:12px; padding:16px 18px; }
+  .card-head{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .card-head .ttl{ font-size:16px; font-weight:600; }
+  .badge{ margin-left:auto; font-size:10px; padding:2px 9px; border-radius:8px; font-weight:600; }
+  .badge.live{ background:#E1F5EE; color:#085041; }
+  .badge.auto{ background:var(--surface); color:var(--muted); }
+  .icn{ font-size:18px; color:var(--muted); }
+  .srow{ display:flex; gap:10px; padding:6px 0; border-bottom:0.5px solid var(--line); }
+  .srow:last-child{ border-bottom:none; }
+  .srow .t{ min-width:58px; font-size:12px; color:var(--muted); }
+  .srow .l{ font-size:13px; }
+  .srow.now{ background:#FAEEDA40; border-radius:6px; padding:6px 8px; margin:0 -8px; }
+  .kidlabel{ display:inline-block; font-size:11px; font-weight:600; padding:2px 9px;
+    border-radius:7px; margin:12px 0 5px; }
+  .check{ display:flex; align-items:center; gap:11px; padding:7px 0;
+    border-bottom:0.5px solid var(--line); cursor:pointer; user-select:none; }
+  .check:last-child{ border-bottom:none; }
+  .check input{ width:22px; height:22px; flex-shrink:0; accent-color:#1D9E75; cursor:pointer; }
+  .check .txt{ font-size:13.5px; }
+  .check.done{ opacity:0.42; }
+  .check.done .txt{ text-decoration:line-through; }
+  .addrow{ display:flex; gap:8px; margin-top:12px; }
+  .addrow input{ flex:1; font-family:inherit; font-size:14px; padding:8px 11px;
+    border:0.5px solid var(--line2); border-radius:8px; background:var(--bg); color:var(--ink); }
+  .addrow button, .resetbtn{ font-family:inherit; font-size:13px; font-weight:500; padding:8px 14px;
+    border:0.5px solid var(--line2); border-radius:8px; background:var(--bg); color:var(--ink); cursor:pointer; }
+  .addrow button:active, .resetbtn:active{ transform:scale(0.97); }
+  .mrow{ display:flex; gap:10px; padding:6px 0; border-bottom:0.5px solid var(--line); }
+  .mrow:last-child{ border-bottom:none; }
+  .mrow .d{ min-width:38px; font-size:12px; font-weight:600; color:var(--muted); }
+  .mrow .m{ font-size:13px; }
+  .mrow.today{ font-weight:600; }
+  .foot{ margin-top:18px; display:flex; justify-content:space-between; align-items:center;
+    font-size:11px; color:var(--hint); }
+  .setup{ background:#FAEEDA; color:#633806; border-radius:8px; padding:12px 16px;
+    font-size:13px; margin-bottom:14px; line-height:1.6; }
+  @media (prefers-color-scheme: dark){ .setup{ background:#3a2a0a; color:#f0c775; } }
+  .setup code{ background:#00000018; padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1 id="dayName">—</h1>
+    <div class="sub" id="dayFocus">Family command center</div>
+  </div>
+  <div>
+    <div class="clock" id="clock">—:—</div>
+    <div id="weather" style="font-size:13px;color:var(--muted);margin-top:3px;">—</div>
+    <div class="sync" id="sync"><i>●</i> connecting…</div>
+  </div>
+</div>
+
+<div class="nowstrip" id="nowStrip" style="display:none;">
+  <span class="ti" style="font-size:18px;">▶</span>
+  <div>
+    <div class="lab">right now</div>
+    <div class="blk" id="nowBlk">—</div>
+  </div>
+</div>
+
+<div id="setupNote" class="setup">
+  <strong>One-time setup (≈5 min):</strong> This file isn't connected to your shared database yet.
+  Create a free Supabase account, then paste your project URL and key into the two marked lines
+  near the top of this file's code. Until then, check-offs save only on this one device.
+  Full step-by-step instructions are in the message that came with this file.
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">◷</span><span class="ttl">Today's schedule</span>
+      <span class="badge auto">auto</span>
+    </div>
+    <div id="sched"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">☑</span><span class="ttl">Today's chores</span>
+      <span class="badge live">live</span>
+    </div>
+    <div id="chores"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">🛒</span><span class="ttl">Grocery list</span>
+      <span class="badge live">live</span>
+    </div>
+    <div id="grocery"></div>
+    <div class="addrow">
+      <input type="text" id="addItem" placeholder="Add item…" />
+      <button onclick="addGrocery()">Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">📅</span><span class="ttl">This week's events</span>
+      <span class="badge live">live</span>
+    </div>
+    <div id="calFeed" style="margin-bottom:8px;"><div style="font-size:12.5px;color:var(--hint);padding:6px 0;">Loading calendars…</div></div>
+    <div id="calLegend" style="display:flex;flex-wrap:wrap;gap:8px 14px;padding:8px 0;border-top:0.5px solid var(--line);font-size:11px;color:var(--muted);"></div>
+    <div id="events"></div>
+    <div class="addrow">
+      <input type="text" id="addEvent" placeholder="Quick note (not on a calendar)…" />
+      <button onclick="addEvent()">Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">🍽</span><span class="ttl">This week's dinners</span>
+      <span class="badge auto">static</span>
+    </div>
+    <div id="meals"></div>
+  </div>
+
+</div>
+
+<div class="foot">
+  <span>Family Command Center</span>
+  <button class="resetbtn" onclick="resetDay()">Reset today's checkmarks</button>
+</div>
+
+<script>
+/* ============================================================
+   SUPABASE SETUP — paste your two values between the quotes.
+   Find them in Supabase: Project Settings → API.
+   Leave blank to run in local-only mode (saves on this device).
+   ============================================================ */
+const SUPABASE_URL = "https://nrqdwaijwexbtzlqvuxf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_35hDrvMRv9e1LmppUi18tw_V9wqoStW";
+/* ============================================================ */
+
+/* ---- SUMMER schedule (until mid-August) ---- */
+const SCHEDULES = {
+  Monday: { focus:"SUMMER · clean bathrooms · no-screen family night", rows:[
+    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
+    {t:"9:10",l:"Clean bathrooms"},{t:"9:35",l:"Study block #1 (2 hrs) — boys on quiet time"},
+    {t:"11:35",l:"Lunch + rest"},{t:"12:20",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
+    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
+    {t:"5:00",l:"Start dinner"},{t:"6:00",l:"No-screen family night"},{t:"8:00",l:"Bedtimes begin"},
+    {t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
+  Tuesday: { focus:"SUMMER · clinical day · leave 1:15 pm · laundry #1", rows:[
+    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk"},{t:"9:10",l:"Laundry load #1"},
+    {t:"9:15",l:"Clinical prep study — boys on quiet time"},{t:"10:45",l:"Rotate laundry"},
+    {t:"11:00",l:"Lunch + pack clinical bag"},{t:"12:00",l:"Rest + light prep"},
+    {t:"1:15",l:"Leave for hospital · Chad has the kids"},{t:"3:00",l:"Clinicals 3–11 pm"},{t:"11:30",l:"Home · straight to bed"} ]},
+  Wednesday: { focus:"SUMMER · kitchen deep clean · seafood dinner", rows:[
+    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
+    {t:"9:10",l:"Kitchen deep clean"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
+    {t:"11:30",l:"Lunch + rest"},{t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
+    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
+    {t:"5:00",l:"Dinner · seafood"},{t:"8:00",l:"Bedtimes begin"},{t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
+  Thursday: { focus:"SUMMER · no class till mid-Aug · floors", rows:[
+    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
+    {t:"9:10",l:"Mop kitchen + bathroom floors"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
+    {t:"11:30",l:"Lunch + rest"},{t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
+    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
+    {t:"5:00",l:"Start dinner"},{t:"8:00",l:"Bedtimes begin"},{t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
+  Friday: { focus:"SUMMER · laundry #2: bedding + towels · no studying tonight", rows:[
+    {t:"8:00",l:"Boys up · breakfast · strip their beds"},{t:"8:45",l:"Dog walk"},{t:"9:10",l:"Start bedding loads"},
+    {t:"9:30",l:"Weekly review (1.5 hrs) — boys on quiet time"},{t:"11:00",l:"Fold + return bedding"},
+    {t:"11:15",l:"Plan next week"},{t:"11:45",l:"Lunch + rest"},
+    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
+    {t:"5:00",l:"Start dinner"},{t:"6:30",l:"Friday family time"},{t:"8:00",l:"Bedtimes begin"},
+    {t:"9:00",l:"Husband time"},{t:"10:00",l:"In bed"} ]},
+  Saturday: { focus:"Family speed clean · family day · sleep in", rows:[
+    {t:"7–8",l:"Wake naturally — no alarm"},{t:"mid-am",l:"Light study (1 hr max)"},
+    {t:"10:00",l:"Family 20-min speed clean"},{t:"pm",l:"Family time — outings"},
+    {t:"5:00",l:"Dinner — relaxed"},{t:"8:00",l:"Bedtimes begin"},{t:"9:00",l:"Husband time"},{t:"10:30",l:"Bed"} ]},
+  Sunday: { focus:"Recharge · Sunday reset · protect Mia's evening", rows:[
+    {t:"am",l:"Slow morning · light movement"},{t:"mid-am",l:"Light review (1 hr max)"},
+    {t:"pm",l:"Family time"},{t:"4:00",l:"Kids tidy rooms"},{t:"5:00",l:"Dinner"},
+    {t:"7:00",l:"Mia's calm Sunday routine"},{t:"8:00",l:"Bedtimes begin"},
+    {t:"9:00",l:"SUNDAY RESET — most important"},{t:"10:00",l:"In bed"} ]}
+};
+
+/* ---- Per-kid chores by day, from your schedules ---- */
+const KIDS_ORDER = ["Christina","Chad","Alex","Ollie"];
+const KID_COLORS = {
+  Christina:["#E1F5EE","#085041"], Chad:["#FAEEDA","#633806"],
+  Alex:["#E6F1FB","#0C447C"], Ollie:["#EEEDFE","#3C3489"]
+};
+const CHORES = {
+  Monday: {
+    Christina:["Clean bathrooms","Wipe kitchen counters + sink","Start a load of laundry"],
+    Chad:["Kitchen after dinner: dishes + wipe down","Take out trash if full"],
+    Alex:["Make bed + tidy room","Wipe bathroom sink + mirror","Load/unload dishwasher"],
+    Ollie:["Make bed (light help)","Tidy his bathroom","Feed the dogs"] },
+  Tuesday: {
+    Christina:["Laundry load #1 before clinicals","Quick kitchen reset before leaving"],
+    Chad:["Crockpot/dinner + kitchen cleanup","Kids' baths + bedtime","Move laundry to dryer + fold"],
+    Alex:["Make bed + tidy room","Fold + put away his clothes","Take out trash"],
+    Ollie:["Make bed (light help)","Fold his clothes (light help)","Feed the dogs"] },
+  Wednesday: {
+    Christina:["Kitchen deep clean (stovetop, microwave, fridge front)","Wipe counters"],
+    Chad:["Kitchen after dinner: dishes + wipe down","Tidy living room"],
+    Alex:["Make bed + tidy room","Unload dishwasher + sweep","Wipe counters"],
+    Ollie:["Make bed (light help)","Wipe table + chairs","Feed the dogs"] },
+  Thursday: {
+    Christina:["Mop kitchen + bathroom floors","Change/wash hand towels"],
+    Chad:["Vacuum living room + hallways","Kitchen after dinner"],
+    Alex:["Make bed + tidy room","Vacuum his room","Load/unload dishwasher"],
+    Ollie:["Make bed (light help)","Tidy play spaces","Feed the dogs"] },
+  Friday: {
+    Christina:["Bedding + towels: wash all","Fold + return bedding to rooms","Wipe down bathrooms"],
+    Chad:["Strip + remake the main bed","Kitchen after dinner","Empty all trash + recycling to curb"],
+    Alex:["Strip bed → laundry room","Remake his bed","Take out trash + recycling"],
+    Ollie:["Strip pillowcase + sheet","Remake his bed (light help)","Feed the dogs"] },
+  Saturday: {
+    Christina:["Dust + surfaces during family speed clean","Overflow / catch-all tidy"],
+    Chad:["Bathrooms + kitchen during speed clean","Yard / outdoor task"],
+    Alex:["Trash + recycling (whole house)","Tidy his room"],
+    Ollie:["Tidy play spaces","Feed the dogs"] },
+  Sunday: {
+    Christina:["Sunday reset: lay out clothes + pack bags","Wipe kitchen + start week clean"],
+    Chad:["Fridge cleanout + take stock for grocery list","Tidy living room + reset"],
+    Alex:["Full room tidy + stray laundry"],
+    Ollie:["Tidy room + shared spaces","Feed the dogs"] }
+};
+
+/* ---- Weekly dinners ---- */
+const MEALS = [
+  ["Mon","Sheet-pan chicken"],["Tue","Crockpot dinner"],["Wed","Seafood dinner"],
+  ["Thu","Pasta bake"],["Fri","Tacos / family night"],["Sat","Easy / no-cook"],["Sun","Roast + reset"]
+];
+
+/* ---- Default grocery (regenerated each bi-weekly shop) ---- */
+const DEFAULT_GROCERY = [
+  "Salmon fillets","Lactose-free milk","Soft veg: zucchini, carrots (peeled)",
+  "Chicken thighs","Crockpot beef","Rice","Oats","Bananas","Eggs","Mild taco seasoning"
+];
+
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let STATE = { checks:{}, grocery:null, groceryChecks:{}, events:[], stamp:"" };
+let sb = null;
+
+/* ---- date helpers ---- */
+function todayName(){ return DAYS[new Date().getDay()]; }
+function dayStamp(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+
+/* ---- rendering ---- */
+function renderSchedule(){
+  var day = todayName();
+  var s = SCHEDULES[day];
+  document.getElementById("dayName").textContent = day;
+  document.getElementById("dayFocus").textContent = s.focus;
+  document.getElementById("sched").innerHTML = s.rows.map(function(r){
+    return '<div class="srow"><span class="t">'+r.t+'</span><span class="l">'+r.l+'</span></div>';
+  }).join("");
+}
+function renderChores(){
+  var day = todayName();
+  var ch = CHORES[day];
+  var html = "";
+  KIDS_ORDER.forEach(function(kid){
+    var tasks = ch[kid] || [];
+    if(!tasks.length) return;
+    var col = KID_COLORS[kid];
+    html += '<div class="kidlabel" style="background:'+col[0]+';color:'+col[1]+';">'+kid+'</div>';
+    tasks.forEach(function(t,i){
+      var key = day+"|"+kid+"|"+i;
+      var on = !!STATE.checks[key];
+      var noChore = /no chore|no task/i.test(t);
+      if(noChore){
+        html += '<div class="check" style="cursor:default;opacity:0.6;"><span style="width:22px;text-align:center;">—</span><span class="txt">'+t+'</span></div>';
+      } else {
+        html += '<label class="check'+(on?' done':'')+'"><input type="checkbox" '+(on?'checked':'')+
+          ' onchange="toggleCheck(\''+key+'\',this.checked)"><span class="txt">'+t+'</span></label>';
+      }
+    });
+  });
+  document.getElementById("chores").innerHTML = html;
+}
+function renderGrocery(){
+  var list = STATE.grocery || DEFAULT_GROCERY;
+  document.getElementById("grocery").innerHTML = list.map(function(g,i){
+    var on = !!STATE.groceryChecks[i];
+    return '<label class="check'+(on?' done':'')+'"><input type="checkbox" '+(on?'checked':'')+
+      ' onchange="toggleGrocery('+i+',this.checked)"><span class="txt">'+g+'</span></label>';
+  }).join("");
+}
+function renderMeals(){
+  var todayAbbr = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date().getDay()];
+  document.getElementById("meals").innerHTML = MEALS.map(function(m){
+    var t = (m[0]===todayAbbr) ? ' today' : '';
+    return '<div class="mrow'+t+'"><span class="d">'+m[0]+'</span><span class="m">'+m[1]+'</span></div>';
+  }).join("");
+}
+function renderEvents(){
+  var el = document.getElementById("events");
+  if(!STATE.events || !STATE.events.length){
+    el.innerHTML = '<div style="font-size:12.5px;color:var(--hint);padding:6px 0;">No events yet — add one below.</div>';
+    return;
+  }
+  el.innerHTML = STATE.events.map(function(ev,i){
+    return '<div class="check" style="cursor:default;">'
+      +'<span class="txt" style="flex:1;">'+ev+'</span>'
+      +'<span onclick="removeEvent('+i+')" style="cursor:pointer;color:var(--hint);font-size:16px;padding:0 4px;">×</span></div>';
+  }).join("");
+}
+function renderAll(){ renderSchedule(); renderChores(); renderGrocery(); renderEvents(); renderMeals(); }
+
+/* ---- state mutations ---- */
+function toggleCheck(key,val){ STATE.checks[key]=val; renderChores(); save(); }
+function toggleGrocery(i,val){ STATE.groceryChecks[i]=val; renderGrocery(); save(); }
+function addGrocery(){
+  var inp=document.getElementById("addItem"); var v=inp.value.trim(); if(!v) return;
+  if(!STATE.grocery) STATE.grocery = DEFAULT_GROCERY.slice();
+  STATE.grocery.push(v); inp.value=""; renderGrocery(); save();
+}
+function addEvent(){
+  var inp=document.getElementById("addEvent"); var v=inp.value.trim(); if(!v) return;
+  if(!STATE.events) STATE.events = [];
+  STATE.events.push(v); inp.value=""; renderEvents(); save();
+}
+function removeEvent(i){ STATE.events.splice(i,1); renderEvents(); save(); }
+function resetDay(){
+  var day = todayName();
+  Object.keys(STATE.checks).forEach(function(k){ if(k.indexOf(day+"|")===0) delete STATE.checks[k]; });
+  STATE.groceryChecks = {};
+  renderChores(); renderGrocery(); save();
+}
+
+/* auto-clear checkmarks when a new day starts */
+function rolloverIfNewDay(){
+  var st = dayStamp();
+  if(STATE.stamp && STATE.stamp !== st){
+    STATE.checks = {}; STATE.groceryChecks = {};
+  }
+  STATE.stamp = st;
+}
+
+/* ---- persistence: Supabase if configured, else localStorage ---- */
+async function save(){
+  setSync("saving");
+  if(sb){
+    try{
+      await sb.from("command_center").upsert({ id:1, data:STATE });
+      setSync("ok");
+    }catch(e){ localSave(); setSync("ok"); }
+  } else { localSave(); setSync("ok"); }
+}
+function localSave(){ try{ localStorage.setItem("cc_state", JSON.stringify(STATE)); }catch(e){} }
+async function load(){
+  if(sb){
+    try{
+      var res = await sb.from("command_center").select("data").eq("id",1).single();
+      if(res.data && res.data.data) STATE = Object.assign(STATE, res.data.data);
+      setSync("ok");
+    }catch(e){ localLoad(); }
+  } else { localLoad(); }
+  rolloverIfNewDay();
+  renderAll();
+}
+function localLoad(){ try{ var s=localStorage.getItem("cc_state"); if(s) STATE=Object.assign(STATE,JSON.parse(s)); }catch(e){} }
+
+function setSync(mode){
+  var el=document.getElementById("sync");
+  if(mode==="saving"){ el.className="sync saving"; el.innerHTML="● saving…"; }
+  else if(mode==="ok"){ el.className="sync"; el.innerHTML="● synced"; }
+  else { el.className="sync saving"; el.innerHTML="● local only"; }
+}
+
+/* ---- clock + now-strip ---- */
+function tick(){
+  var d=new Date(); var h=d.getHours(),m=d.getMinutes();
+  var ap=h>=12?"pm":"am"; var h12=h%12||12;
+  document.getElementById("clock").textContent=h12+":"+(m<10?"0":"")+m+" "+ap;
+}
+
+/* ---- weather: Rochester, NY via free Open-Meteo (no key needed) ---- */
+var WX_CODES = {0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Cloudy",45:"Fog",48:"Fog",
+  51:"Drizzle",53:"Drizzle",55:"Drizzle",61:"Rain",63:"Rain",65:"Heavy rain",
+  71:"Snow",73:"Snow",75:"Heavy snow",77:"Snow",80:"Showers",81:"Showers",82:"Heavy showers",
+  85:"Snow showers",86:"Snow showers",95:"Thunderstorm",96:"Thunderstorm",99:"Thunderstorm"};
+async function loadWeather(){
+  try{
+    var url="https://api.open-meteo.com/v1/forecast?latitude=43.16&longitude=-77.61"
+      +"&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min"
+      +"&temperature_unit=fahrenheit&timezone=America/New_York&forecast_days=1";
+    var r=await fetch(url); var j=await r.json();
+    var now=Math.round(j.current.temperature_2m);
+    var desc=WX_CODES[j.current.weather_code]||"";
+    var hi=Math.round(j.daily.temperature_2m_max[0]);
+    var lo=Math.round(j.daily.temperature_2m_min[0]);
+    document.getElementById("weather").textContent=now+"° "+desc+" · H "+hi+"° / L "+lo+"°";
+  }catch(e){ document.getElementById("weather").textContent=""; }
+}
+
+/* ---- Family calendars — fetched via our own Netlify function (reliable, no CORS) ---- */
+async function loadCalendars(){
+  try{
+    var r=await fetch("/api/calendars");
+    if(!r.ok) throw new Error(r.status);
+    var data=await r.json();
+    var all=data.events||[];
+    var cals=data.calendars||[];
+
+    var el=document.getElementById("calFeed");
+    if(!all.length){
+      el.innerHTML='<div style="font-size:12.5px;color:var(--hint);padding:6px 0;">No calendar events in the next 7 days.</div>';
+    } else {
+      el.innerHTML=all.map(function(ev){
+        var d=new Date(ev.date);
+        var day=d.toLocaleDateString(undefined,{weekday:"short"});
+        var when=ev.allDay?day:day+" "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+        return '<div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:0.5px solid var(--line);">'
+          +'<span style="width:9px;height:9px;border-radius:50%;background:'+ev.color+';flex-shrink:0;"></span>'
+          +'<span style="min-width:78px;font-size:12px;color:var(--muted);">'+when+'</span>'
+          +'<span style="font-size:13px;">'+ev.title+'</span></div>';
+      }).join("");
+    }
+    document.getElementById("calLegend").innerHTML=cals.map(function(c){
+      return '<span style="display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:'+c.color+';"></span>'+c.who+'</span>';
+    }).join("");
+  }catch(e){
+    document.getElementById("calFeed").innerHTML='<div style="font-size:12.5px;color:var(--hint);padding:6px 0;">Calendars couldn\u2019t load right now — will retry.</div>';
+  }
+}
+
+/* ---- init ---- */
+(function init(){
+  tick(); setInterval(tick,15000);
+  loadWeather(); setInterval(loadWeather, 1800000);
+  loadCalendars(); setInterval(loadCalendars, 900000);
+  if(SUPABASE_URL && SUPABASE_KEY){
+    document.getElementById("setupNote").style.display="none";
+    var s=document.createElement("script");
+    s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+    s.onload=function(){
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      load();
+      setInterval(load, 20000);   // refresh from cloud every 20s
+    };
+    s.onerror=function(){ load(); };
+    document.head.appendChild(s);
+  } else {
+    setSync("local"); load();
+    setInterval(function(){ rolloverIfNewDay(); renderAll(); }, 60000);
+  }
+})();
+</script>
+
+</body>
+</html>
