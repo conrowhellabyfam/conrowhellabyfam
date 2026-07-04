@@ -158,17 +158,6 @@
     <div id="meals"></div>
   </div>
 
-  <div class="card">
-    <div class="card-head">
-      <span class="icn">🧺</span><span class="ttl">Grocery list</span>
-      <span class="badge live">live</span>
-    </div>
-    <div id="grocery"></div>
-    <div class="addrow">
-      <input type="text" id="addItem" placeholder="Add item…" />
-      <button onclick="addGrocery()">Add</button>
-    </div>
-  </div>
 
 </div>
 
@@ -288,14 +277,8 @@ const MEALS = [
   ["Thu","Pasta bake"],["Fri","Tacos / family night"],["Sat","Easy / no-cook"],["Sun","Roast + reset"]
 ];
 
-/* ---- Default grocery (regenerated each bi-weekly shop) ---- */
-const DEFAULT_GROCERY = [
-  "Salmon fillets","Lactose-free milk","Soft veg: zucchini, carrots (peeled)",
-  "Chicken thighs","Crockpot beef","Rice","Oats","Bananas","Eggs","Mild taco seasoning"
-];
-
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-let STATE = { checks:{}, grocery:null, groceryChecks:{}, events:[], stamp:"" };
+let STATE = { checks:{}, events:[], stamp:"" };
 let sb = null;
 
 /* ---- date helpers ---- */
@@ -335,14 +318,6 @@ function renderChores(){
   });
   document.getElementById("chores").innerHTML = html;
 }
-function renderGrocery(){
-  var list = STATE.grocery || DEFAULT_GROCERY;
-  document.getElementById("grocery").innerHTML = list.map(function(g,i){
-    var on = !!STATE.groceryChecks[i];
-    return '<label class="check'+(on?' done':'')+'"><input type="checkbox" '+(on?'checked':'')+
-      ' onchange="toggleGrocery('+i+',this.checked)"><span class="txt">'+g+'</span></label>';
-  }).join("");
-}
 function renderMeals(){
   var todayAbbr = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date().getDay()];
   document.getElementById("meals").innerHTML = MEALS.map(function(m){
@@ -362,16 +337,10 @@ function renderEvents(){
       +'<span onclick="removeEvent('+i+')" style="cursor:pointer;color:var(--hint);font-size:16px;padding:0 4px;">×</span></div>';
   }).join("");
 }
-function renderAll(){ renderSchedule(); renderChores(); renderGrocery(); renderEvents(); renderMeals(); }
+function renderAll(){ renderSchedule(); renderChores(); renderEvents(); renderMeals(); }
 
 /* ---- state mutations ---- */
 function toggleCheck(key,val){ STATE.checks[key]=val; renderChores(); save(); }
-function toggleGrocery(i,val){ STATE.groceryChecks[i]=val; renderGrocery(); save(); }
-function addGrocery(){
-  var inp=document.getElementById("addItem"); var v=inp.value.trim(); if(!v) return;
-  if(!STATE.grocery) STATE.grocery = DEFAULT_GROCERY.slice();
-  STATE.grocery.push(v); inp.value=""; renderGrocery(); save();
-}
 function addEvent(){
   var inp=document.getElementById("addEvent"); var v=inp.value.trim(); if(!v) return;
   if(!STATE.events) STATE.events = [];
@@ -381,15 +350,14 @@ function removeEvent(i){ STATE.events.splice(i,1); renderEvents(); save(); }
 function resetDay(){
   var day = todayName();
   Object.keys(STATE.checks).forEach(function(k){ if(k.indexOf(day+"|")===0) delete STATE.checks[k]; });
-  STATE.groceryChecks = {};
-  renderChores(); renderGrocery(); save();
+  renderChores(); save();
 }
 
 /* auto-clear checkmarks when a new day starts */
 function rolloverIfNewDay(){
   var st = dayStamp();
   if(STATE.stamp && STATE.stamp !== st){
-    STATE.checks = {}; STATE.groceryChecks = {};
+    STATE.checks = {};
   }
   STATE.stamp = st;
 }
