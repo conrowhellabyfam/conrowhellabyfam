@@ -37,9 +37,10 @@
     box-shadow:0 2px 12px #C17A5418; }
   .nowstrip .lab{ font-size:10px; text-transform:uppercase; letter-spacing:0.12em; opacity:0.8; font-weight:700; }
   .nowstrip .blk{ font-family:var(--serif); font-size:17px; font-weight:500; }
-  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px; align-items:start; }
+  .grid{ column-width:290px; column-gap:16px; }
   .card{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px 20px;
-    box-shadow:0 4px 16px #A8927015, 0 1px 3px #A8927012; }
+    box-shadow:0 4px 16px #A8927015, 0 1px 3px #A8927012;
+    break-inside:avoid; margin-bottom:16px; display:inline-block; width:100%; }
   .card-head{ display:flex; align-items:center; gap:9px; margin-bottom:14px;
     padding-bottom:10px; border-bottom:1.5px dashed var(--line2); }
   .card-head .ttl{ font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ink); }
@@ -135,18 +136,18 @@
 
   <div class="card">
     <div class="card-head">
-      <span class="icn">🧺</span><span class="ttl">Today's chores</span>
-      <span class="badge live">live</span>
-    </div>
-    <div id="chores"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-head">
       <span class="icn">🌿</span><span class="ttl">Today's schedule</span>
       <span class="badge auto">auto</span>
     </div>
     <div id="sched"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">🧺</span><span class="ttl">Today's chores</span>
+      <span class="badge live">live</span>
+    </div>
+    <div id="chores"></div>
   </div>
 
   <div class="card">
