@@ -13,14 +13,32 @@ const CALENDARS = [
 function unfold(text) {
   return text.replace(/\r\n[ \t]/g, "").replace(/\n[ \t]/g, "");
 }
-function parseDate(v) {
-  const m = v.match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2}))?/);
+
+// Converts a wall-clock time in `timeZone` to the correct UTC instant.
+function zonedTimeToUtc(y, mo, d, h, mi, s, timeZone) {
+  const guess = new Date(Date.UTC(y, mo, d, h, mi, s));
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone, year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+  }).formatToParts(guess).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+  const asIfUtc = Date.UTC(
+    +parts.year, +parts.month - 1, +parts.day,
+    parts.hour === "24" ? 0 : +parts.hour, +parts.minute, +parts.second
+  );
+  return new Date(guess.getTime() - (asIfUtc - guess.getTime()));
+}
+
+function parseDate(value, params) {
+  const m = value.match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?/);
   if (!m) return null;
   const allDay = !m[4];
-  const d = allDay
-    ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]))
-    : new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6] || 0));
-  return { date: d, allDay };
+  const y = +m[1], mo = +m[2] - 1, d = +m[3];
+  if (allDay) return { date: new Date(Date.UTC(y, mo, d)), allDay: true };
+  const h = +m[4], mi = +m[5], s = +m[6] || 0;
+  if (m[7]) return { date: new Date(Date.UTC(y, mo, d, h, mi, s)), allDay: false };
+  const tzMatch = params.match(/TZID=([^;:]+)/);
+  const tz = tzMatch ? tzMatch[1] : "America/New_York";
+  return { date: zonedTimeToUtc(y, mo, d, h, mi, s, tz), allDay: false };
 }
 function parseICS(text) {
   text = unfold(text);
@@ -29,9 +47,9 @@ function parseICS(text) {
   for (let i = 1; i < blocks.length; i++) {
     const b = blocks[i];
     const sum = (b.match(/SUMMARY[^:]*:(.*)/) || [])[1];
-    const dt = (b.match(/DTSTART[^:]*:([0-9TZ]+)/) || [])[1];
-    if (!sum || !dt) continue;
-    const pd = parseDate(dt);
+    const dtMatch = b.match(/DTSTART([^:\r\n]*):([0-9TZ]+)/);
+    if (!sum || !dtMatch) continue;
+    const pd = parseDate(dtMatch[2], dtMatch[1]);
     if (!pd) continue;
     events.push({ title: sum.trim(), date: pd.date.toISOString(), allDay: pd.allDay });
   }
