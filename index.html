@@ -5,36 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Family Command Center</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Nunito+Sans:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap');
   :root{
-    --bg:#F4EDE2; --bg2:#EFE6D8; --ink:#3D342A; --muted:#8A7B6A; --hint:#B0A392;
-    --line:#E3D7C5; --line2:#D8CAB4; --card:#FBF6EE; --surface:#EFE6D8;
-    --terracotta:#C17A54; --terracotta-soft:#EBD3C4;
-    --sage:#8A9A7B; --sage-soft:#DDE3D2;
-    --clay:#B5654A; --gold:#C9A55C; --gold-soft:#EFE2C6;
+    --ink:#1c2521; --paper:#f3efe4; --paper-2:#eae4d4;
+    --bg:#f3efe4; --bg2:#eae4d4; --muted:#74705f; --hint:#9a9484;
+    --line:#d6cfbd; --line2:#cdc5b0; --card:#fbf8ef; --surface:#eae4d4;
+    --clay:#c4622d; --terracotta:#c4622d; --terracotta-soft:#eeddcb;
+    --sage:#5d7a5a; --sage-deep:#3f5a3d; --sage-soft:#dbe3d5;
+    --berry:#9a4458; --slate:#3f5066;
+    --gold:#cf9b3f; --gold-soft:#efe2c6;
     --plum:#9A7B8E; --plum-soft:#E5DAE0;
-    --serif:'Fraunces',Georgia,serif; --sans:'Nunito Sans',sans-serif;
+    --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+    --shadow:rgba(28,37,33,.10);
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   body{ font-family:var(--sans); background:var(--bg);
-    background-image:radial-gradient(circle at 15% 12%, #EFE6D855 0%, transparent 40%),
-                     radial-gradient(circle at 85% 88%, #EBD3C433 0%, transparent 42%);
-    color:var(--ink); -webkit-font-smoothing:antialiased; padding:18px 16px; }
+    background-image:radial-gradient(circle at 15% 12%, #eae4d455 0%, transparent 40%),
+                     radial-gradient(circle at 85% 88%, #eeddcb44 0%, transparent 42%);
+    color:var(--ink); -webkit-font-smoothing:antialiased; padding:0 0 40px; }
   .topbar{ display:flex; align-items:flex-end; justify-content:space-between;
-    padding-bottom:16px; margin-bottom:18px; position:relative; }
-  .topbar::after{ content:""; position:absolute; bottom:0; left:0; right:0; height:2px;
-    background:linear-gradient(90deg, var(--terracotta) 0%, var(--gold) 45%, var(--sage) 100%);
-    border-radius:2px; opacity:0.55; }
-  .topbar h1{ font-family:var(--serif); font-size:32px; font-weight:600; letter-spacing:-0.5px;
-    color:var(--ink); line-height:1; }
-  .topbar .sub{ font-family:var(--serif); font-style:italic; font-size:14px; color:var(--terracotta); margin-top:5px; }
-  .clock{ font-family:var(--serif); font-size:34px; font-weight:500; line-height:1; text-align:right; color:var(--ink); }
-  .sync{ font-size:11px; margin-top:6px; text-align:right; color:var(--sage); font-weight:600; }
-  .sync.saving{ color:var(--gold); }
+    background:var(--ink); color:var(--paper); padding:26px 22px 24px; margin-bottom:20px;
+    position:relative; overflow:hidden; }
+  .topbar .eyebrow{ font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--gold); font-weight:600; margin-bottom:4px; }
+  .topbar .leaf{ position:absolute; right:-34px; top:-34px; width:190px; height:190px;
+    border:1.5px solid rgba(207,155,63,.22); border-radius:50% 50% 50% 0;
+    transform:rotate(20deg); pointer-events:none; }
+  .topbar h1{ font-family:var(--serif); font-size:34px; font-weight:900; letter-spacing:-0.01em;
+    color:var(--paper); line-height:.98; }
+  .topbar #fullDate{ color:#cdc6b6 !important; }
+  .topbar .sub{ font-family:var(--serif); font-style:italic; font-size:14px; color:var(--clay); margin-top:5px; }
+  .clock{ font-family:var(--serif); font-size:34px; font-weight:500; line-height:1; text-align:right; color:var(--paper); }
+  .topbar #weather{ color:#cdc6b6 !important; }
+  .sync{ font-size:11px; margin-top:6px; text-align:right; color:var(--gold); font-weight:600; }
+  .sync.saving{ color:#e0c98a; }
+  main{ padding:0 16px; }
   .nowstrip{ display:flex; align-items:center; gap:12px;
     background:linear-gradient(100deg, var(--terracotta-soft), var(--gold-soft));
-    color:var(--clay); border-radius:18px; padding:13px 18px; margin-bottom:18px;
-    box-shadow:0 2px 12px #C17A5418; }
+    color:var(--clay); border-radius:18px; padding:13px 18px; margin:0 16px 18px;
+    box-shadow:0 2px 12px #c4622d18; }
   .nowstrip .lab{ font-size:10px; text-transform:uppercase; letter-spacing:0.12em; opacity:0.8; font-weight:700; }
   .nowstrip .blk{ font-family:var(--serif); font-size:17px; font-weight:500; }
   .grid{ column-width:290px; column-gap:16px; }
@@ -90,17 +99,21 @@
 <body>
 
 <div class="topbar">
+  <div class="leaf"></div>
   <div>
+    <div class="eyebrow">Christina &amp; Chad · Family</div>
     <h1 id="dayName">—</h1>
-    <div id="fullDate" style="font-family:var(--serif);font-size:15px;color:var(--muted);margin-top:2px;">—</div>
+    <div id="fullDate" style="font-family:var(--serif);font-size:15px;margin-top:2px;">—</div>
     <div class="sub" id="dayFocus">Family command center</div>
   </div>
   <div>
     <div class="clock" id="clock">—:—</div>
-    <div id="weather" style="font-size:13px;color:var(--muted);margin-top:4px;font-weight:600;">—</div>
+    <div id="weather" style="font-size:13px;margin-top:4px;font-weight:600;">—</div>
     <div class="sync" id="sync">● connecting…</div>
   </div>
 </div>
+
+<main>
 
 <div class="nowstrip" id="nowStrip" style="display:none;">
   <span class="ti" style="font-size:18px;">▶</span>
@@ -118,6 +131,20 @@
 </div>
 
 <div class="grid">
+
+  <div class="card">
+    <div class="card-head">
+      <span class="icn">🍲</span><span class="ttl">Dinners</span>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:10px;padding:2px 0 10px;border-bottom:1px solid var(--line);margin-bottom:10px;">
+      <span style="font-family:var(--serif);font-size:12px;font-weight:700;color:var(--terracotta);white-space:nowrap;">Tonight</span>
+      <span id="tonightDinner" style="font-size:14px;font-weight:600;">—</span>
+    </div>
+    <a href="/dinners.html" style="display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);padding:4px 0;">
+      <span style="font-size:13px;color:var(--muted);">Full 4-week rotation + 25 quick meals</span>
+      <span style="font-family:var(--serif);font-weight:700;color:var(--terracotta);white-space:nowrap;">Open →</span>
+    </a>
+  </div>
 
   <div class="card">
     <div class="card-head">
@@ -158,20 +185,6 @@
     <div id="rotation"></div>
   </div>
 
-  <div class="card">
-    <div class="card-head">
-      <span class="icn">🍲</span><span class="ttl">Dinners</span>
-    </div>
-    <div style="display:flex;align-items:baseline;gap:10px;padding:2px 0 10px;border-bottom:1px solid var(--line);margin-bottom:10px;">
-      <span style="font-family:var(--serif);font-size:12px;font-weight:700;color:var(--terracotta);white-space:nowrap;">Tonight</span>
-      <span id="tonightDinner" style="font-size:14px;font-weight:600;">—</span>
-    </div>
-    <a href="/dinners.html" style="display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);padding:4px 0;">
-      <span style="font-size:13px;color:var(--muted);">Full 4-week rotation + 25 quick meals</span>
-      <span style="font-family:var(--serif);font-weight:700;color:var(--terracotta);white-space:nowrap;">Open →</span>
-    </a>
-  </div>
-
 
 </div>
 
@@ -179,6 +192,8 @@
   <span>Family Command Center</span>
   <button class="resetbtn" onclick="resetDay()">Reset today's checkmarks</button>
 </div>
+
+</main>
 
 <script>
 /* ============================================================
