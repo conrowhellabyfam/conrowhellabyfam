@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Dinners</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink:#1c2521;        /* deep forest ink */
+    --paper:#f3efe4;      /* warm oat paper */
+    --paper-2:#eae4d4;
+    --clay:#c4622d;       /* terracotta */
+    --sage:#5d7a5a;       /* sage green */
+    --sage-deep:#3f5a3d;
+    --berry:#9a4458;      /* her accent */
+    --slate:#3f5066;      /* his accent */
+    --gold:#cf9b3f;
+    --line:#d6cfbd;
+    --shadow:rgba(28,37,33,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ---------- Back link ---------- */
+  .backbar{background:var(--ink);padding:10px 22px 0}
+  .backbtn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);
+    color:var(--paper);border:none;border-radius:30px;padding:8px 16px;font-family:'Inter';
+    font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s}
+  .backbtn:hover{background:rgba(255,255,255,.2)}
+  /* ---------- Header ---------- */
+  header{
+    background:var(--ink);
+    color:var(--paper);
+    padding:20px 22px 26px;
+    position:relative;
+    overflow:hidden;
+  }
+  header .eyebrow{
+    font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;
+  }
+  header h1{
+    font-family:'Fraunces',serif;font-weight:900;
+    font-size:clamp(32px,7vw,52px);line-height:.98;
+    margin:6px 0 4px;letter-spacing:-.01em;
+  }
+  header h1 em{font-style:italic;color:var(--clay)}
+  header p{font-size:14px;color:#cdc6b6;max-width:560px}
+  .leaf{
+    position:absolute;right:-30px;top:-30px;width:200px;height:200px;
+    border:1.5px solid rgba(207,155,63,.25);border-radius:50% 50% 50% 0;
+    transform:rotate(20deg);pointer-events:none;
+  }
+  /* ---------- Layout ---------- */
+  main{max-width:920px;margin:0 auto;padding:26px 18px 80px}
+  h2.sec{
+    font-family:'Fraunces',serif;font-weight:600;font-size:24px;
+    margin:6px 0 2px;letter-spacing:-.01em;
+  }
+  .sec-note{font-size:13px;color:#74705f;margin-bottom:16px;max-width:640px}
+  /* ---------- Cards ---------- */
+  .pill{
+    display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;
+    padding:3px 9px;border-radius:20px;text-transform:uppercase;
+  }
+  .pill.sage{background:rgba(93,122,90,.16);color:var(--sage-deep)}
+  /* ---------- Meal plan ---------- */
+  .week-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+  .wbtn{
+    border:1.5px solid var(--line);background:#fbf8ef;border-radius:30px;
+    padding:7px 15px;font-size:13px;font-weight:600;cursor:pointer;color:#6f6a5a;
+    transition:all .15s;font-family:'Inter';
+  }
+  .wbtn:hover{border-color:var(--sage)}
+  .wbtn.active{background:var(--sage-deep);color:#fff;border-color:var(--sage-deep)}
+  .week{display:none}
+  .week.active{display:block}
+  /* ---- meal mode toggle ---- */
+  .meal-mode{display:inline-flex;gap:4px;background:var(--paper-2);border:1.5px solid var(--line);border-radius:30px;padding:4px;margin-bottom:18px}
+  .mbtn{border:none;background:transparent;border-radius:24px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;color:#6f6a5a;font-family:'Inter';transition:all .15s}
+  .mbtn:hover{color:var(--ink)}
+  .mbtn.active{background:var(--clay);color:#fff;box-shadow:0 1px 3px rgba(196,98,45,.3)}
+  .meal-view{display:none}
+  .meal-view.active{display:block}
+  /* ---- quick filter chips ---- */
+  .qfilter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+  .qchip{border:1.5px solid var(--line);background:#fbf8ef;border-radius:30px;padding:6px 13px;font-size:12.5px;font-weight:600;cursor:pointer;color:#6f6a5a;font-family:'Inter';transition:all .15s}
+  .qchip:hover{border-color:var(--sage)}
+  .qchip.active{background:var(--sage-deep);color:#fff;border-color:var(--sage-deep)}
+  /* ---- quick meal cards ---- */
+  .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  @media(max-width:600px){.qgrid{grid-template-columns:1fr}}
+  .qcard{border:1px solid var(--line);border-radius:12px;background:#fbf8ef;padding:14px 15px;display:flex;flex-direction:column;gap:6px}
+  .qcard h4{font-family:'Fraunces',serif;font-size:16px;font-weight:600;line-height:1.15}
+  .qcard .qdesc{font-size:12.5px;color:#5e5a4c;line-height:1.45;flex:1}
+  .qmeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:2px}
+  .qtime{font-size:11px;font-weight:700;color:var(--clay);background:rgba(196,98,45,.1);padding:2px 8px;border-radius:20px}
+  .qtype{font-size:11px;font-weight:600;color:#74705f}
+  .qgut{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .qgut.safe{background:rgba(93,122,90,.16);color:var(--sage-deep)}
+  .qgut.tweak{background:rgba(63,80,102,.12);color:var(--slate)}
+  .qswap{font-size:11.5px;color:#3a4658;background:rgba(63,80,102,.07);border-left:3px solid var(--slate);padding:6px 9px;border-radius:7px;line-height:1.4}
+  .qcount{font-size:12px;color:#8a8474;margin:-6px 0 12px 2px}
+  .meal{
+    border:1px solid var(--line);border-radius:12px;background:#fbf8ef;
+    padding:15px 16px;margin-bottom:11px;
+  }
+  .meal-top{display:flex;align-items:flex-start;gap:12px}
+  .meal-day{
+    font-family:'Fraunces',serif;font-weight:600;font-size:12px;
+    writing-mode:vertical-rl;transform:rotate(180deg);
+    color:var(--clay);letter-spacing:.08em;text-transform:uppercase;padding-top:2px;
+  }
+  .meal-main{flex:1}
+  .meal h4{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin-bottom:3px}
+  .meal .desc{font-size:13px;color:#5e5a4c;margin-bottom:8px}
+  .tags{display:flex;flex-wrap:wrap;gap:5px}
+  .crohn-note{
+    font-size:12px;margin-top:9px;padding:8px 11px;border-radius:8px;
+    background:rgba(63,80,102,.08);border-left:3px solid var(--slate);color:#3a4658;
+  }
+  .crohn-note b{color:var(--slate)}
+  .kid-note{
+    font-size:12px;margin-top:7px;padding:8px 11px;border-radius:8px;
+    background:rgba(207,155,63,.12);border-left:3px solid var(--gold);color:#7a5e1f;
+  }
+  .foot{text-align:center;font-size:12px;color:#8a8474;margin-top:30px;padding-top:18px;border-top:1px solid var(--line)}
+  .disclaimer{font-size:11.5px;color:#9a9484;margin-top:6px;max-width:600px;margin-left:auto;margin-right:auto}
+  #meals{display:block}
+</style>
+</head>
+<body>
+<div class="backbar">
+  <a href="/" class="backbtn">← Back to command center</a>
+</div>
+<header>
+  <div class="leaf"></div>
+  <div class="eyebrow">Christina &amp; Chad · Family Dinners</div>
+  <h1>Our <em>Dinners</em></h1>
+  <p>A month of rotating family dinners plus a stash of under-30-minute fillers for the nights nobody's decided. Every meal feeds everyone — smaller portions and extra veg for Christina, bigger protein for Chad, gut-friendly flags throughout.</p>
+</header>
+<main>
+<section id="meals">
+    <div class="meal-mode" id="mealMode">
+      <button class="mbtn active" data-mode="rotation">4-Week Rotation</button>
+      <button class="mbtn" data-mode="quick">Quick Fillers · under 30 min</button>
+    </div>
+
+    <div class="meal-view active" id="view-rotation">
+      <h2 class="sec">Four weeks of rotating dinners</h2>
+      <p class="sec-note">Five planned dinners per week (leave two nights flexible for leftovers or takeout). Each is family-sized and built around a protein + veg + smart carb. Crohn's notes are for Chad; kid notes make it easy for little ones.</p>
+      <div class="week-tabs" id="weekTabs"></div>
+      <div id="weeks"></div>
+    </div>
+
+    <div class="meal-view" id="view-quick">
+      <h2 class="sec">Quick fillers · 25 meals under 30 minutes</h2>
+      <p class="sec-note">For the nights nobody's decided. Every one is family-sized and done start-to-finish in 30 minutes or less. Filter by type, and check the gut tag — <span style="color:var(--sage-deep);font-weight:600">safe</span> means low-trigger for Chad, <span style="color:var(--slate);font-weight:600">tweak</span> means there's a simple swap noted.</p>
+      <div class="qfilter" id="qFilter"></div>
+      <div id="quickList"></div>
+    </div>
+  </section>
+  <div class="foot">
+    Built for Christina &amp; Chad · one dinner, everyone fed
+    <p class="disclaimer">Crohn's notes are general guidance for Chad, not medical or dietary prescription — his GI provider's advice comes first.</p>
+  </div>
+</main>
+<script>
+/* ---------- Meal data ---------- */
+const weeks=[
+ {label:'Week 1',meals:[
+  {day:'Mon',name:'Sheet-Pan Chicken Thighs & Roasted Veg',desc:'Bone-in thighs with zucchini, carrots and potatoes on one pan.',tags:['High protein','One pan','~25 min'],crohn:'Peel and soft-roast the veg for Chad during any flare; skip charred edges.',kid:'Plate plain chicken + potato wedges before adding herbs.'},
+  {day:'Tue',name:'Salmon Rice Bowls',desc:'Baked salmon over jasmine rice with cucumber and a soy-sesame drizzle.',tags:['Omega-3','Gut-friendly','~20 min'],crohn:'Peel the cucumber; go light on the sesame oil if greasy food is a trigger.',kid:'Serve salmon flaked over plain rice, sauce on the side.'},
+  {day:'Wed',name:'Turkey & Zucchini Skillet',desc:'Lean ground turkey, diced zucchini, white rice, mild seasoning.',tags:['One pan','Lean','~20 min'],crohn:'Naturally low-residue — a safe go-to on iffy gut days.',kid:'Mild base; add cheese on top for the kids.'},
+  {day:'Thu',name:'Steak & Mashed Potato Plates',desc:'Seared sirloin, creamy mash, soft green beans.',tags:['Protein-dense','Comfort','~30 min'],crohn:'Use lactose-free milk in the mash; trim visible fat off the steak.',kid:'Cut steak small; kids love the mash.'},
+  {day:'Fri',name:'Build-Your-Own Tacos',desc:'Seasoned beef or chicken, corn tortillas, toppings bar.',tags:['Family fun','Customizable','~25 min'],crohn:'Chad skips raw onion + heavy spice; soft tortilla, cooked toppings.',kid:'Deconstructed — meat, cheese, tortilla separate.'},
+ ]},
+ {label:'Week 2',meals:[
+  {day:'Mon',name:'Lemon-Herb Chicken & Orzo',desc:'Pan chicken with orzo, spinach wilted in at the end.',tags:['One pot','~25 min'],crohn:'Cook spinach fully; orzo is gentler than whole-grain pasta.',kid:'Buttered orzo + chicken strips.'},
+  {day:'Tue',name:'White Fish & Roasted Potatoes',desc:'Mild baked cod with herbed potatoes and soft carrots.',tags:['Lean','Low-residue','~30 min'],crohn:'One of the most gut-friendly nights — very low trigger.',kid:'Fish fingers style; ketchup welcome.'},
+  {day:'Wed',name:'Beef & Broccoli Rice Bowls',desc:'Thin-sliced beef, tender broccoli, jasmine rice, light sauce.',tags:['Takeout-style','~25 min'],crohn:'Cook broccoli very soft or swap for green beans if raw-ish veg is a trigger.',kid:'Beef + rice, broccoli on the side.'},
+  {day:'Thu',name:'Stuffed Sweet Potatoes',desc:'Baked sweet potato loaded with turkey, cheese, avocado.',tags:['Fiber-smart','~30 min'],crohn:'Scoop the soft flesh, skip the skin for Chad.',kid:'Mash it up with a little butter and cheese.'},
+  {day:'Fri',name:'Homemade Burgers & Oven Fries',desc:'Lean beef patties, soft buns, baked fries.',tags:['Family favorite','~30 min'],crohn:'Lean patty, no heavy grease; soft bun easier than seeded.',kid:'Plain patty + fries.'},
+ ]},
+ {label:'Week 3',meals:[
+  {day:'Mon',name:'Chicken Fried Rice',desc:'Day-old rice, eggs, peas, carrots, diced chicken.',tags:['Uses leftovers','~20 min'],crohn:'Go easy on oil; keep it mild, no chili.',kid:'A reliable kid pleaser.'},
+  {day:'Tue',name:'Baked Meatballs & Marinara',desc:'Turkey-beef meatballs over pasta with a simple sauce.',tags:['Make-ahead','~30 min'],crohn:'Use white pasta; choose a low-acid sauce if tomato bothers him.',kid:'Meatballs + buttered noodles.'},
+  {day:'Wed',name:'Honey-Garlic Salmon & Rice',desc:'Glazed salmon, jasmine rice, soft green beans.',tags:['Omega-3','~25 min'],crohn:'Light glaze; well-cooked beans.',kid:'Mild salmon flakes + rice.'},
+  {day:'Thu',name:'Pork Tenderloin & Roasted Squash',desc:'Sliced tenderloin with soft-roasted butternut squash.',tags:['Lean','~35 min'],crohn:'Squash is gentle and low-residue when fully roasted.',kid:'Mash the squash with butter.'},
+  {day:'Fri',name:'Quesadilla Night',desc:'Chicken & cheese quesadillas, mild salsa, rice.',tags:['Quick','~20 min'],crohn:'Lactose-free cheese option; salsa on the side for Chad.',kid:'Cheese-only quesadilla.'},
+ ]},
+ {label:'Week 4',meals:[
+  {day:'Mon',name:'Teriyaki Chicken & Veg',desc:'Chicken with soft carrots, zucchini over rice.',tags:['One pan','~25 min'],crohn:'Light sauce; fully cook the veg.',kid:'Chicken + rice, sauce light.'},
+  {day:'Tue',name:'Shrimp & Grits (lightened)',desc:'Sautéed shrimp over creamy grits with peppers.',tags:['Comfort','~25 min'],crohn:'Lactose-free milk in grits; mild peppers, no cayenne.',kid:'Shrimp + plain grits.'},
+  {day:'Wed',name:'Loaded Baked Potato Bar',desc:'Potatoes + chili, cheese, broccoli, Greek yogurt topping.',tags:['Customizable','~30 min'],crohn:'Chad skips skin + heavy chili spice; soft toppings.',kid:'Butter + cheese potato.'},
+  {day:'Thu',name:'Chicken Caesar Wraps',desc:'Grilled chicken, romaine, light dressing in soft wraps.',tags:['Fast','~15 min'],crohn:'Chop lettuce fine or warm the filling; light dressing.',kid:'Chicken + cheese roll-up.'},
+  {day:'Fri',name:'Beef Stir-Fry Noodles',desc:'Thin beef, soft veg, rice noodles, mild sauce.',tags:['Takeout-style','~25 min'],crohn:'Rice noodles are gentle; keep veg soft and sauce mild.',kid:'Plain noodles + beef.'},
+ ]},
+];
+
+const wt=document.getElementById('weekTabs');
+const wk=document.getElementById('weeks');
+weeks.forEach((w,i)=>{
+  wt.insertAdjacentHTML('beforeend',`<button class="wbtn ${i===0?'active':''}" data-w="${i}">${w.label}</button>`);
+  const meals=w.meals.map(m=>`
+    <div class="meal">
+      <div class="meal-top">
+        <div class="meal-day">${m.day}</div>
+        <div class="meal-main">
+          <h4>${m.name}</h4>
+          <div class="desc">${m.desc}</div>
+          <div class="tags">${m.tags.map(t=>`<span class="pill sage">${t}</span>`).join('')}</div>
+          <div class="crohn-note"><b>Chad / Crohn's:</b> ${m.crohn}</div>
+          <div class="kid-note"><b>For the kids:</b> ${m.kid}</div>
+        </div>
+      </div>
+    </div>`).join('');
+  wk.insertAdjacentHTML('beforeend',`<div class="week ${i===0?'active':''}" data-week="${i}">${meals}</div>`);
+});
+wt.querySelectorAll('.wbtn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    wt.querySelectorAll('.wbtn').forEach(x=>x.classList.remove('active'));
+    wk.querySelectorAll('.week').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    wk.querySelector(`[data-week="${b.dataset.w}"]`).classList.add('active');
+  });
+});
+
+/* ---------- Quick filler meals (under 30 min) ---------- */
+const quick=[
+ {n:'Chicken Quesadillas',t:'Chicken',m:18,desc:'Shredded rotisserie chicken + cheese in tortillas, crisped in a pan. Serve with rice.',gut:'tweak',swap:'Lactose-free cheese; salsa on the side for Chad.'},
+ {n:'Honey-Garlic Chicken Bites',t:'Chicken',m:25,desc:'Diced chicken pan-seared in a quick honey-soy-garlic glaze over jasmine rice.',gut:'safe',swap:''},
+ {n:'BBQ Chicken Flatbreads',t:'Chicken',m:20,desc:'Naan topped with chicken, mild BBQ sauce, cheese — broiled 6 minutes.',gut:'tweak',swap:'Go light on smoky/spicy BBQ; lactose-free cheese.'},
+ {n:'Chicken Fried Rice',t:'Chicken',m:20,desc:'Day-old rice, eggs, peas, carrots, diced chicken. The leftover-rice hero.',gut:'safe',swap:'Easy on the oil; no chili.'},
+ {n:'Lemon Chicken & Orzo',t:'Chicken',m:25,desc:'Pan chicken with orzo and wilted spinach in one pot.',gut:'safe',swap:'Cook spinach fully.'},
+ {n:'Buffalo-Lite Chicken Wraps',t:'Chicken',m:15,desc:'Warm chicken, mild sauce, lettuce, ranch in soft wraps.',gut:'tweak',swap:'Skip buffalo heat for Chad — use a mild garlic sauce.'},
+ {n:'Smash Burgers & Oven Fries',t:'Beef',m:25,desc:'Thin lean patties seared hard, soft buns, fries from the freezer.',gut:'tweak',swap:'Lean beef, soft bun (not seeded), no heavy grease.'},
+ {n:'Beef & Broccoli',t:'Beef',m:25,desc:'Thin-sliced beef and tender broccoli in a light stir-fry sauce over rice.',gut:'tweak',swap:'Cook broccoli very soft or swap for green beans.'},
+ {n:'Taco Skillet',t:'Beef',m:20,desc:'Browned beef, beans, corn, mild seasoning — scoop with tortillas or over rice.',gut:'tweak',swap:'Mild spice, well-cooked beans; cheese on top for kids.'},
+ {n:'Spaghetti & Quick Meat Sauce',t:'Pasta',m:25,desc:'Browned beef simmered in jarred marinara, white pasta.',gut:'tweak',swap:'Low-acid sauce if tomato bothers him; white over whole-wheat pasta.'},
+ {n:'Sloppy Joe Bowls',t:'Beef',m:22,desc:'Saucy ground beef over rice or soft buns, mild and kid-loved.',gut:'tweak',swap:'Mild seasoning, low-acid sauce.'},
+ {n:'Beef Stir-Fry Noodles',t:'Beef',m:25,desc:'Thin beef, soft veg, rice noodles, mild sauce.',gut:'safe',swap:'Rice noodles are gentle; keep veg soft.'},
+ {n:'Salmon Rice Bowls',t:'Seafood',m:20,desc:'Baked salmon over jasmine rice with peeled cucumber and a light drizzle.',gut:'safe',swap:'Peel cucumber; go light on sesame oil.'},
+ {n:'Shrimp Scampi & Pasta',t:'Seafood',m:20,desc:'Garlic-butter shrimp tossed with white pasta and a little lemon.',gut:'tweak',swap:'Easy on butter/garlic if rich food is a trigger.'},
+ {n:'Fish Tacos (soft)',t:'Seafood',m:25,desc:'Quick-seared white fish, soft tortillas, cabbage, mild crema.',gut:'tweak',swap:'Warm the slaw / chop fine; lactose-free crema.'},
+ {n:'Tuna Melt & Tomato Soup',t:'Seafood',m:18,desc:'Classic tuna melts with a cup of mild tomato soup.',gut:'tweak',swap:'Use a low-acid/cream soup; lactose-free cheese.'},
+ {n:'Honey-Garlic Salmon',t:'Seafood',m:22,desc:'Glazed salmon fillets, jasmine rice, soft green beans.',gut:'safe',swap:'Light glaze; well-cooked beans.'},
+ {n:'Pork Chops & Applesauce',t:'Pork',m:25,desc:'Quick pan-seared chops, mashed potatoes, applesauce on the side.',gut:'safe',swap:'Lactose-free milk in the mash.'},
+ {n:'Sausage & Peppers',t:'Pork',m:25,desc:'Sliced chicken or pork sausage with soft peppers over rice or roll.',gut:'tweak',swap:'Mild sausage, peppers cooked very soft, no hot links.'},
+ {n:'Ham & Cheese Sliders',t:'Pork',m:20,desc:'Soft rolls with ham and cheese, warmed in the oven; serve with fruit.',gut:'tweak',swap:'Lactose-free cheese; soft rolls.'},
+ {n:'Loaded Baked Potato Bar',t:'Veg',m:25,desc:'Microwave-start potatoes + toppings: cheese, broccoli, beans, yogurt.',gut:'tweak',swap:'Chad scoops the flesh, skips the skin; soft toppings only.'},
+ {n:'Veggie Fried Rice + Eggs',t:'Veg',m:20,desc:'Soft veg, scrambled egg, rice — protein from eggs and edamame.',gut:'safe',swap:'Fully cook veg; light oil.'},
+ {n:'Grilled Cheese & Soup',t:'Veg',m:15,desc:'The fastest dinner — grilled cheese with a mild, creamy soup.',gut:'tweak',swap:'Lactose-free cheese; cream soup over acidic tomato.'},
+ {n:'Egg & Cheese Quesadillas',t:'Veg',m:15,desc:'Scrambled eggs and cheese folded into tortillas, crisped fast.',gut:'tweak',swap:'Lactose-free cheese.'},
+ {n:'Breakfast-for-Dinner',t:'Veg',m:20,desc:'Eggs, soft hash browns, fruit, toast — high protein, gut-gentle.',gut:'safe',swap:'Scramble or soft-cook eggs; peel fruit if needed.'},
+];
+
+const quickList=document.getElementById('quickList');
+const qFilter=document.getElementById('qFilter');
+const types=['All',...[...new Set(quick.map(q=>q.t))]];
+let activeType='All';
+
+function renderQuick(){
+  const items=quick.filter(q=>activeType==='All'||q.t===activeType);
+  const cards=items.map(q=>`
+    <div class="qcard">
+      <h4>${q.n}</h4>
+      <div class="qmeta">
+        <span class="qtime">⏱ ${q.m} min</span>
+        <span class="qtype">${q.t}</span>
+        <span class="qgut ${q.gut}">${q.gut==='safe'?'✓ gut-safe':'△ tweak for Chad'}</span>
+      </div>
+      <div class="qdesc">${q.desc}</div>
+      ${q.swap?`<div class="qswap"><b>Swap:</b> ${q.swap}</div>`:''}
+    </div>`).join('');
+  quickList.innerHTML=`<div class="qcount">${items.length} meals shown</div><div class="qgrid">${cards}</div>`;
+}
+types.forEach(t=>{
+  qFilter.insertAdjacentHTML('beforeend',`<button class="qchip ${t==='All'?'active':''}" data-type="${t}">${t}</button>`);
+});
+qFilter.querySelectorAll('.qchip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    qFilter.querySelectorAll('.qchip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    activeType=c.dataset.type;
+    renderQuick();
+  });
+});
+renderQuick();
+
+/* ---------- Meal mode toggle ---------- */
+const mealMode=document.getElementById('mealMode');
+mealMode.querySelectorAll('.mbtn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    mealMode.querySelectorAll('.mbtn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.meal-view').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('view-'+b.dataset.mode).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
