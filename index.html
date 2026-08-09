@@ -152,10 +152,10 @@
 
   <div class="card">
     <div class="card-head">
-      <span class="icn">🍲</span><span class="ttl">This week's dinners</span>
+      <span class="icn">🧽</span><span class="ttl">Cleaning rotation</span>
       <span class="badge auto">static</span>
     </div>
-    <div id="meals"></div>
+    <div id="rotation"></div>
   </div>
 
 
@@ -176,54 +176,81 @@ const SUPABASE_URL = "https://nrqdwaijwexbtzlqvuxf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_35hDrvMRv9e1LmppUi18tw_V9wqoStW";
 /* ============================================================ */
 
-/* ---- SUMMER schedule (until mid-August) ---- */
+/* ---- Real-Life Weekday schedule (school-year mornings · summer afternoons) ---- */
 const SCHEDULES = {
-  Monday: { focus:"SUMMER · clean bathrooms · no-screen family night", rows:[
-    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
-    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
-    {t:"9:10",l:"Clean bathrooms"},{t:"9:35",l:"Study block #1 (2 hrs) — boys on quiet time"},
-    {t:"11:35",l:"Lunch + rest"},{t:"12:20",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
-    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
-    {t:"5:00",l:"Start dinner"},{t:"6:00",l:"No-screen family night"},{t:"8:00",l:"Bedtimes begin"},
-    {t:"10:00",l:"In bed"} ]},
-  Tuesday: { focus:"SUMMER · laundry #1 · no clinicals in summer", rows:[
-    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
-    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
-    {t:"9:10",l:"Laundry load #1"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
-    {t:"10:45",l:"Rotate laundry"},{t:"11:30",l:"Lunch + rest"},
-    {t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},{t:"2:00",l:"Boys: free / outdoor time"},
-    {t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
-    {t:"5:00",l:"Start dinner"},{t:"8:00",l:"Bedtimes begin"},{t:"10:00",l:"In bed"} ]},
-  Wednesday: { focus:"SUMMER · kitchen deep clean · seafood dinner", rows:[
-    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
-    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
-    {t:"9:10",l:"Kitchen deep clean"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
-    {t:"11:30",l:"Lunch + rest"},{t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
-    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
-    {t:"5:00",l:"Dinner · seafood"},{t:"8:00",l:"Bedtimes begin"},{t:"10:00",l:"In bed"} ]},
-  Thursday: { focus:"SUMMER · no class till mid-Aug · floors", rows:[
-    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
-    {t:"8:00",l:"Boys up · breakfast · get dressed"},{t:"8:45",l:"Dog walk · boys: 1 tidy task"},
-    {t:"9:10",l:"Mop kitchen + bathroom floors"},{t:"9:30",l:"Study block #1 (2 hrs) — boys on quiet time"},
-    {t:"11:30",l:"Lunch + rest"},{t:"12:15",l:"Study block #2 (1.5 hrs) — boys quiet/independent"},
-    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
-    {t:"5:00",l:"Start dinner"},{t:"8:00",l:"Bedtimes begin"},{t:"10:00",l:"In bed"} ]},
-  Friday: { focus:"SUMMER · laundry #2: bedding + towels · no studying tonight", rows:[
-    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Meditation (15 min)"},{t:"5:20",l:"Workout + stretch (45 min)"},{t:"6:05",l:"Shower"},{t:"6:20",l:"Get ready"},
-    {t:"8:00",l:"Boys up · breakfast · strip their beds"},{t:"8:45",l:"Dog walk"},{t:"9:10",l:"Start bedding loads"},
-    {t:"9:30",l:"Weekly review (1.5 hrs) — boys on quiet time"},{t:"11:00",l:"Fold + return bedding"},
-    {t:"11:15",l:"Plan next week"},{t:"11:45",l:"Lunch + rest"},
-    {t:"2:00",l:"Boys: free / outdoor time"},{t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus"},
-    {t:"5:00",l:"Start dinner"},{t:"6:30",l:"Friday family time"},{t:"8:00",l:"Bedtimes begin"},
-    {t:"10:00",l:"In bed"} ]},
+  Monday: { focus:"Cleaning: bathrooms · dinner every night", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Stretch + workout (35 min)"},
+    {t:"5:40",l:"Buffer / cushion (5 min)"},{t:"5:45",l:"Get ready (15 min)"},
+    {t:"6:00",l:"Wake Alex + Ollie · breakfast · Alex feeds dogs"},{t:"6:15",l:"Wake Mia · full prompts, step by step"},
+    {t:"6:30",l:"Mia + Alex on bus"},{t:"7:10",l:"Ollie unloads dishwasher"},{t:"7:30",l:"Ollie on bus · wake Lincoln"},
+    {t:"8:30",l:"Lincoln on bus · all kids gone"},
+    {t:"8:30",l:"Dog walk (20 min)"},{t:"8:50",l:"Clean bathrooms (30 min)"},
+    {t:"9:20",l:"Study block #1 (1 hr)"},{t:"10:20",l:"Short break"},{t:"10:50",l:"Study block #2 (1 hr)"},
+    {t:"11:50",l:"Lunch + rest"},{t:"12:35",l:"Phone window #1 (30 min)"},
+    {t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus · snack + connect"},
+    {t:"4:30",l:"Start dinner"},{t:"6:00",l:"Dinner on the table"},{t:"6:45",l:"Alex loads dishwasher"},
+    {t:"7:00",l:"Kids wind-down · Ollie feeds dogs"},{t:"8:00",l:"Mia to bed · Lincoln bedtime · phone window #2"},
+    {t:"9:00",l:"Screens off · lay out tomorrow's clothes"},{t:"10:00",l:"In bed"} ]},
+  Tuesday: { focus:"Cleaning: kitchen · dinner every night", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Stretch + workout (35 min)"},
+    {t:"5:40",l:"Buffer / cushion (5 min)"},{t:"5:45",l:"Get ready (15 min)"},
+    {t:"6:00",l:"Wake Alex + Ollie · breakfast · Alex feeds dogs"},{t:"6:15",l:"Wake Mia · full prompts, step by step"},
+    {t:"6:30",l:"Mia + Alex on bus"},{t:"7:10",l:"Ollie unloads dishwasher"},{t:"7:30",l:"Ollie on bus · wake Lincoln"},
+    {t:"8:30",l:"Lincoln on bus · all kids gone"},
+    {t:"8:30",l:"Dog walk (20 min)"},{t:"8:50",l:"Clean kitchen (30 min)"},
+    {t:"9:20",l:"Study block #1 (1 hr)"},{t:"10:20",l:"Short break"},{t:"10:50",l:"Study block #2 (1 hr)"},
+    {t:"11:50",l:"Lunch + rest"},{t:"12:35",l:"Phone window #1 (30 min)"},
+    {t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus · snack + connect"},
+    {t:"4:30",l:"Start dinner"},{t:"6:00",l:"Dinner on the table"},{t:"6:45",l:"Alex loads dishwasher"},
+    {t:"7:00",l:"Kids wind-down · Ollie feeds dogs"},{t:"8:00",l:"Mia to bed · Lincoln bedtime · phone window #2"},
+    {t:"9:00",l:"Screens off · lay out tomorrow's clothes"},{t:"10:00",l:"In bed"} ]},
+  Wednesday: { focus:"Cleaning: floors · seafood dinner", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Stretch + workout (35 min)"},
+    {t:"5:40",l:"Buffer / cushion (5 min)"},{t:"5:45",l:"Get ready (15 min)"},
+    {t:"6:00",l:"Wake Alex + Ollie · breakfast · Alex feeds dogs"},{t:"6:15",l:"Wake Mia · full prompts, step by step"},
+    {t:"6:30",l:"Mia + Alex on bus"},{t:"7:10",l:"Ollie unloads dishwasher"},{t:"7:30",l:"Ollie on bus · wake Lincoln"},
+    {t:"8:30",l:"Lincoln on bus · all kids gone"},
+    {t:"8:30",l:"Dog walk (20 min)"},{t:"8:50",l:"Vacuum + spot-mop floors (30 min)"},
+    {t:"9:20",l:"Study block #1 (1 hr)"},{t:"10:20",l:"Short break"},{t:"10:50",l:"Study block #2 (1 hr)"},
+    {t:"11:50",l:"Lunch + rest"},{t:"12:35",l:"Phone window #1 (30 min)"},
+    {t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus · snack + connect"},
+    {t:"4:30",l:"Start dinner · seafood"},{t:"6:00",l:"Dinner on the table"},{t:"6:45",l:"Alex loads dishwasher"},
+    {t:"7:00",l:"Kids wind-down · Ollie feeds dogs"},{t:"8:00",l:"Mia to bed · Lincoln bedtime · phone window #2"},
+    {t:"9:00",l:"Screens off · lay out tomorrow's clothes"},{t:"10:00",l:"In bed"} ]},
+  Thursday: { focus:"Cleaning: bedrooms · dinner every night", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Stretch + workout (35 min)"},
+    {t:"5:40",l:"Buffer / cushion (5 min)"},{t:"5:45",l:"Get ready (15 min)"},
+    {t:"6:00",l:"Wake Alex + Ollie · breakfast · Alex feeds dogs"},{t:"6:15",l:"Wake Mia · full prompts, step by step"},
+    {t:"6:30",l:"Mia + Alex on bus"},{t:"7:10",l:"Ollie unloads dishwasher"},{t:"7:30",l:"Ollie on bus · wake Lincoln"},
+    {t:"8:30",l:"Lincoln on bus · all kids gone"},
+    {t:"8:30",l:"Dog walk (20 min)"},{t:"8:50",l:"Bedrooms — dust + declutter (30 min)"},
+    {t:"9:20",l:"Study block #1 (1 hr)"},{t:"10:20",l:"Short break"},{t:"10:50",l:"Study block #2 (1 hr)"},
+    {t:"11:50",l:"Lunch + rest"},{t:"12:35",l:"Phone window #1 (30 min)"},
+    {t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus · snack + connect"},
+    {t:"4:30",l:"Start dinner"},{t:"6:00",l:"Dinner on the table"},{t:"6:45",l:"Alex loads dishwasher"},
+    {t:"7:00",l:"Kids wind-down · Ollie feeds dogs"},{t:"8:00",l:"Mia to bed · Lincoln bedtime · phone window #2"},
+    {t:"9:00",l:"Screens off · lay out tomorrow's clothes"},{t:"10:00",l:"In bed"} ]},
+  Friday: { focus:"Cleaning: reset common areas · dinner every night", rows:[
+    {t:"5:00",l:"Wake · water · no phone"},{t:"5:05",l:"Stretch + workout (35 min)"},
+    {t:"5:40",l:"Buffer / cushion (5 min)"},{t:"5:45",l:"Get ready (15 min)"},
+    {t:"6:00",l:"Wake Alex + Ollie · breakfast · Alex feeds dogs"},{t:"6:15",l:"Wake Mia · full prompts, step by step"},
+    {t:"6:30",l:"Mia + Alex on bus"},{t:"7:10",l:"Ollie unloads dishwasher"},{t:"7:30",l:"Ollie on bus · wake Lincoln"},
+    {t:"8:30",l:"Lincoln on bus · all kids gone"},
+    {t:"8:30",l:"Dog walk (20 min)"},{t:"8:50",l:"Reset — common areas, entryway (30 min)"},
+    {t:"9:20",l:"Study block #1 (1 hr)"},{t:"10:20",l:"Short break"},{t:"10:50",l:"Study block #2 (1 hr)"},
+    {t:"11:50",l:"Lunch + rest · plan next week"},{t:"12:35",l:"Phone window #1 (30 min)"},
+    {t:"2:45",l:"Mia off bus"},{t:"2:50",l:"Lincoln off bus · snack + connect"},
+    {t:"4:30",l:"Start dinner"},{t:"6:00",l:"Dinner on the table"},{t:"6:30",l:"Friday family time"},
+    {t:"7:00",l:"Ollie feeds dogs"},{t:"8:00",l:"Mia to bed · Lincoln bedtime · phone window #2"},
+    {t:"9:00",l:"Screens off · lay out tomorrow's clothes"},{t:"10:00",l:"In bed"} ]},
   Saturday: { focus:"Family speed clean · family day · sleep in", rows:[
     {t:"7–8",l:"Wake naturally — no alarm"},{t:"mid-am",l:"Light study (1 hr max)"},
     {t:"10:00",l:"Family 20-min speed clean"},{t:"pm",l:"Family time — outings"},
     {t:"5:00",l:"Dinner — relaxed"},{t:"8:00",l:"Bedtimes begin"},{t:"10:30",l:"Bed"} ]},
-  Sunday: { focus:"Recharge · Sunday reset · protect Mia's evening", rows:[
+  Sunday: { focus:"Recharge · Sunday reset", rows:[
     {t:"am",l:"Slow morning · light movement"},{t:"mid-am",l:"Light review (1 hr max)"},
     {t:"pm",l:"Family time"},{t:"4:00",l:"Kids tidy rooms"},{t:"5:00",l:"Dinner"},
-    {t:"7:00",l:"Mia's calm Sunday routine"},{t:"8:00",l:"Bedtimes begin"},
+    {t:"8:00",l:"Bedtimes begin"},
     {t:"9:00",l:"SUNDAY RESET — most important"},{t:"10:00",l:"In bed"} ]}
 };
 
@@ -271,10 +298,13 @@ const CHORES = {
     Ollie:["Unload the dishwasher","Feed dogs (evening)","Tidy room + shared spaces"] }
 };
 
-/* ---- Weekly dinners ---- */
-const MEALS = [
-  ["Mon","Sheet-pan chicken"],["Tue","Crockpot dinner"],["Wed","Seafood dinner"],
-  ["Thu","Pasta bake"],["Fri","Tacos / family night"],["Sat","Easy / no-cook"],["Sun","Roast + reset"]
+/* ---- 30-min daily cleaning rotation ---- */
+const ROTATION = [
+  ["Mon","Bathrooms — toilets, mirrors, sinks, towels"],
+  ["Tue","Kitchen — stovetop, counters, microwave, trash"],
+  ["Wed","Floors — vacuum main areas, spot-mop kitchen"],
+  ["Thu","Bedrooms — dust, quick declutter"],
+  ["Fri","Reset — common areas, entryway, surfaces"]
 ];
 
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -318,13 +348,6 @@ function renderChores(){
   });
   document.getElementById("chores").innerHTML = html;
 }
-function renderMeals(){
-  var todayAbbr = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date().getDay()];
-  document.getElementById("meals").innerHTML = MEALS.map(function(m){
-    var t = (m[0]===todayAbbr) ? ' today' : '';
-    return '<div class="mrow'+t+'"><span class="d">'+m[0]+'</span><span class="m">'+m[1]+'</span></div>';
-  }).join("");
-}
 function renderEvents(){
   var el = document.getElementById("events");
   if(!STATE.events || !STATE.events.length){
@@ -337,7 +360,14 @@ function renderEvents(){
       +'<span onclick="removeEvent('+i+')" style="cursor:pointer;color:var(--hint);font-size:16px;padding:0 4px;">×</span></div>';
   }).join("");
 }
-function renderAll(){ renderSchedule(); renderChores(); renderEvents(); renderMeals(); }
+function renderRotation(){
+  var todayAbbr = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date().getDay()];
+  document.getElementById("rotation").innerHTML = ROTATION.map(function(r){
+    var t = (r[0]===todayAbbr) ? ' today' : '';
+    return '<div class="mrow'+t+'"><span class="d">'+r[0]+'</span><span class="m">'+r[1]+'</span></div>';
+  }).join("");
+}
+function renderAll(){ renderSchedule(); renderChores(); renderEvents(); renderRotation(); }
 
 /* ---- state mutations ---- */
 function toggleCheck(key,val){ STATE.checks[key]=val; renderChores(); save(); }
