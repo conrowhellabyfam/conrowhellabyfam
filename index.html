@@ -162,8 +162,12 @@
     <div class="card-head">
       <span class="icn">🍲</span><span class="ttl">Dinners</span>
     </div>
+    <div style="display:flex;align-items:baseline;gap:10px;padding:2px 0 10px;border-bottom:1px solid var(--line);margin-bottom:10px;">
+      <span style="font-family:var(--serif);font-size:12px;font-weight:700;color:var(--terracotta);white-space:nowrap;">Tonight</span>
+      <span id="tonightDinner" style="font-size:14px;font-weight:600;">—</span>
+    </div>
     <a href="/dinners.html" style="display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);padding:4px 0;">
-      <span style="font-size:13.5px;">4-week rotation + 25 quick meals under 30 min · gut-safe flags for Chad</span>
+      <span style="font-size:13px;color:var(--muted);">Full 4-week rotation + 25 quick meals</span>
       <span style="font-family:var(--serif);font-weight:700;color:var(--terracotta);white-space:nowrap;">Open →</span>
     </a>
   </div>
@@ -308,6 +312,25 @@ const CHORES = {
     Ollie:["Unload the dishwasher","Feed dogs (evening)","Tidy room + shared spaces"] }
 };
 
+/* ---- Dinner rotation (matches dinners.html) · auto-cycles 4 weeks ---- */
+const DINNER_ANCHOR = "2026-08-03"; // a Monday = Week 1
+const DINNERS = [
+  { Mon:"Sheet-Pan Chicken Thighs & Roasted Veg", Tue:"Salmon Rice Bowls", Wed:"Turkey & Zucchini Skillet", Thu:"Steak & Mashed Potato Plates", Fri:"Build-Your-Own Tacos" },
+  { Mon:"Lemon-Herb Chicken & Orzo", Tue:"White Fish & Roasted Potatoes", Wed:"Beef & Broccoli Rice Bowls", Thu:"Stuffed Sweet Potatoes", Fri:"Homemade Burgers & Oven Fries" },
+  { Mon:"Chicken Fried Rice", Tue:"Baked Meatballs & Marinara", Wed:"Honey-Garlic Salmon & Rice", Thu:"Pork Tenderloin & Roasted Squash", Fri:"Quesadilla Night" },
+  { Mon:"Teriyaki Chicken & Veg", Tue:"Shrimp & Grits (lightened)", Wed:"Loaded Baked Potato Bar", Thu:"Chicken Caesar Wraps", Fri:"Beef Stir-Fry Noodles" }
+];
+function tonightsDinner(){
+  var now=new Date(); now.setHours(0,0,0,0);
+  var dayIdx=now.getDay(); // 0=Sun..6=Sat
+  if(dayIdx===0||dayIdx===6) return "Flex night — leftovers or takeout";
+  var anchor=new Date(DINNER_ANCHOR+"T00:00:00");
+  var weeks=Math.floor((now-anchor)/(7*24*60*60*1000));
+  var wk=((weeks%4)+4)%4; // 0..3, safe for dates before anchor
+  var dayKey=["","Mon","Tue","Wed","Thu","Fri"][dayIdx];
+  return DINNERS[wk][dayKey] || "Flex night — leftovers or takeout";
+}
+
 /* ---- 30-min daily cleaning rotation ---- */
 const ROTATION = [
   ["Mon","Bathrooms — toilets, mirrors, sinks, towels"],
@@ -377,7 +400,11 @@ function renderRotation(){
     return '<div class="mrow'+t+'"><span class="d">'+r[0]+'</span><span class="m">'+r[1]+'</span></div>';
   }).join("");
 }
-function renderAll(){ renderSchedule(); renderChores(); renderEvents(); renderRotation(); }
+function renderDinner(){
+  var el=document.getElementById("tonightDinner");
+  if(el) el.textContent=tonightsDinner();
+}
+function renderAll(){ renderSchedule(); renderChores(); renderEvents(); renderRotation(); renderDinner(); }
 
 /* ---- state mutations ---- */
 function toggleCheck(key,val){ STATE.checks[key]=val; renderChores(); save(); }
